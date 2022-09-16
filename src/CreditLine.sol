@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.7;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "forge-std/console.sol";
 
 contract CreditLine {
     mapping(address => ActiveCreditLine[]) public UserCreditLines;
@@ -102,6 +101,12 @@ contract CreditLine {
     }
 
     function GetOutstandingAmount() external view returns (uint256) {
+        /**
+            TODO:
+                The outstadning amount should do an interest calculation on the fly.
+                This way we can show the actual outstanding amount on the frontend, and 
+                allow a user to repay it all at once, or just the principal.
+        */
         uint256 amount = 0;
         for (uint256 i = 0; i < UserCreditLines[msg.sender].length; i++) {
             uint256 borrowed = UserCreditLines[msg.sender][i].amount -

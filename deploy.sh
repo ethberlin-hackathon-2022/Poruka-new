@@ -6,4 +6,4 @@ else
     exit 0
 fi
 
-forge create --rpc-url $FOUNDRY_ETH_URL --private-key $FOUNDRY_ETH_PRIVATE_KEY src/Counter.sol:Counter
+forge create --rpc-url $FOUNDRY_ETH_URL --private-key $FOUNDRY_ETH_PRIVATE_KEY src/CreditLine.sol:CreditLine --constructor-args $DAI_ADDRESS

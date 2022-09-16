@@ -191,8 +191,15 @@ contract CreditLineTest is Test {
         // TODO: implement this function
     }
 
+    function testShouldCorrectlyUpdateTheOutstandingAmountOnRepayment() public {
+        // TODO: implement this function
+    }
+
     function testShouldPutInterestIntoTressuary() public {
         // TODO: implement this function
     }
-}
 
+    function testShouldBePossibleToUseNftVoucherForOnBoarding() public {
+        // TODO: implement this function
+    }
+}
