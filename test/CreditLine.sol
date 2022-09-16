@@ -16,13 +16,16 @@ contract CreditLineTest is Test {
         MockDaiInstance = new MockDai();
         CreditLineInstance = new CreditLine(MockDaiInstance);
 
-        MockDaiInstance.mint(TestLender, 0x256);
+        MockDaiInstance.mint(TestLender, 100_000);
         vm.prank(TestLender);
-        MockDaiInstance.approve(address(CreditLineInstance), 0x100);
+        MockDaiInstance.approve(address(CreditLineInstance), 100_000);
     }
 
     function testCreate() public {
-        Line memory line = Line(0x42, 0x42, 0);
+        Line memory line = Line({
+            amount: 0x42,
+            interestRate: 0
+        });
         UserLine memory userLine = UserLine(line, TestBorrower);
         UserLine[] memory userLines = new UserLine[](1);
         userLines[0] = userLine;
@@ -36,7 +39,10 @@ contract CreditLineTest is Test {
     }
 
     function testBorrow() public {
-        Line memory line = Line(0x42, 0x42, 0);
+        Line memory line = Line({
+            amount: 0x42,
+            interestRate: 0
+        });
         UserLine memory userLine = UserLine(line, TestBorrower);
         UserLine[] memory userLines = new UserLine[](1);
         userLines[0] = userLine;
@@ -62,7 +68,10 @@ contract CreditLineTest is Test {
     }
 
     function testExpectRevertIfMoreMoneyIsRequestedThanOnTheLine() public {
-        Line memory line = Line(0x42, 0x42, 0);
+        Line memory line = Line({
+            amount: 0x42,
+            interestRate: 0
+        });
         UserLine memory userLine = UserLine(line, TestBorrower);
         UserLine[] memory userLines = new UserLine[](1);
         userLines[0] = userLine;
@@ -83,7 +92,10 @@ contract CreditLineTest is Test {
     }
 
     function testRepayment() public {
-        Line memory line = Line(0x42, 0x42, 0);
+        Line memory line = Line({
+            amount: 0x42,
+            interestRate: 0
+        });
         UserLine memory userLine = UserLine(line, TestBorrower);
         UserLine[] memory userLines = new UserLine[](1);
         userLines[0] = userLine;
@@ -120,15 +132,66 @@ contract CreditLineTest is Test {
         assert(MockDaiInstance.balanceOf(address(TestBorrower)) == 0x0);
     }
 
-    function testCreateWithInterest() public {
-        // TODO: Should be possible to repay create credit lines with interest
-    }
-
     function testRepaymentWithInterest() public {
-        // TODO: Should be possible to repay with interest
+        // 2022-01-01 22:00:00 GMT+0100
+        vm.warp(1641070800);
+        Line memory line = Line({
+            amount: 10_000,
+            // percentage interest rate
+            interestRate: 10
+        });
+
+        UserLine memory userLine = UserLine(line, TestBorrower);
+        UserLine[] memory userLines = new UserLine[](1);
+        userLines[0] = userLine;
+
+        vm.prank(TestLender);
+        CreditLineInstance.Create(userLines);
+
+        vm.prank(TestBorrower);
+        assert(CreditLineInstance.GetCreditLineAmount() == 10_000);
+
+        BorrowLine memory borrowUserLine = BorrowLine(0, 10_000);
+        BorrowLine[] memory borrowUserLines = new BorrowLine[](1);
+        borrowUserLines[0] = borrowUserLine;
+
+        vm.prank(TestBorrower);
+        CreditLineInstance.Borrow(borrowUserLines);
+        vm.prank(TestBorrower);
+        assert(CreditLineInstance.GetCreditLineAmount() == 0);
+
+        RepaymentLine memory repaymentLine = RepaymentLine(0, 10_000);
+        RepaymentLine[] memory repaymentLines = new RepaymentLine[](1);
+        repaymentLines[0] = repaymentLine;
+
+        vm.prank(TestBorrower);
+        MockDaiInstance.increaseAllowance(address(CreditLineInstance), 10_000);
+
+        vm.prank(TestBorrower);
+        // 2023-01-01 22:00:00 GMT+0100
+        vm.warp(1672603200);
+        CreditLineInstance.Repayment(repaymentLines);
+
+        vm.prank(TestBorrower);
+        assert(CreditLineInstance.GetCreditLineAmount() == 10_000);
+
+        assert(MockDaiInstance.balanceOf(address(CreditLineInstance)) == 10_000);
+        assert(MockDaiInstance.balanceOf(address(TestBorrower)) == 0x0);
+
+        vm.prank(TestBorrower);
+        uint256 feeBalance = CreditLineInstance.GetOutstandingAmount();
+
+        /*
+            10_000 * 10% = 1000 over one year
+        */
+        assert((1000 - feeBalance ) <= 1);
     }
 
     function testShouldNotBePossibleToRepayMoreThanCreditAmount() public {
+        // TODO: implement this function
+    }
+
+    function testShouldPutInterestIntoTressuary() public {
         // TODO: implement this function
     }
 }
