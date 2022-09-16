@@ -29,6 +29,7 @@ contract CreditLineTest is Test {
 
         vm.prank(TestLender);
         CreditLineInstance.Create(userLines);
+        assert(MockDaiInstance.balanceOf(address(CreditLineInstance)) == 0x42);
 
         vm.prank(TestBorrower);
         assert(CreditLineInstance.GetCreditLineAmount() == 0x42);
@@ -52,6 +53,9 @@ contract CreditLineTest is Test {
 
         vm.prank(TestBorrower);
         CreditLineInstance.Borrow(borrowUserLines);
+
+        assert(MockDaiInstance.balanceOf(address(CreditLineInstance)) == 0x0);
+        assert(MockDaiInstance.balanceOf(address(TestBorrower)) == 0x42);
 
         vm.prank(TestBorrower);
         assert(CreditLineInstance.GetCreditLineAmount() == 0);
@@ -90,14 +94,12 @@ contract CreditLineTest is Test {
         vm.prank(TestBorrower);
         assert(CreditLineInstance.GetCreditLineAmount() == 0x42);
 
-        vm.prank(TestLender);
-
         BorrowLine memory borrowUserLine = BorrowLine(0, 0x42);
         BorrowLine[] memory borrowUserLines = new BorrowLine[](1);
         borrowUserLines[0] = borrowUserLine;
 
+        vm.prank(TestBorrower);
         CreditLineInstance.Borrow(borrowUserLines);
-
         vm.prank(TestBorrower);
         assert(CreditLineInstance.GetCreditLineAmount() == 0);
 
@@ -105,6 +107,29 @@ contract CreditLineTest is Test {
         RepaymentLine[] memory repaymentLines = new RepaymentLine[](1);
         repaymentLines[0] = repaymentLine;
 
+        vm.prank(TestBorrower);
+        MockDaiInstance.increaseAllowance(address(CreditLineInstance), 0x42);
+
+        vm.prank(TestBorrower);
         CreditLineInstance.Repayment(repaymentLines);
+
+        vm.prank(TestBorrower);
+        assert(CreditLineInstance.GetCreditLineAmount() == 0x42);
+
+        assert(MockDaiInstance.balanceOf(address(CreditLineInstance)) == 0x42);
+        assert(MockDaiInstance.balanceOf(address(TestBorrower)) == 0x0);
+    }
+
+    function testCreateWithInterest() public {
+        // TODO: Should be possible to repay create credit lines with interest
+    }
+
+    function testRepaymentWithInterest() public {
+        // TODO: Should be possible to repay with interest
+    }
+
+    function testShouldNotBePossibleToRepayMoreThanCreditAmount() public {
+        // TODO: implement this function
     }
 }
+
