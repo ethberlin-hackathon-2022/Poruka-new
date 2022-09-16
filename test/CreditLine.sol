@@ -46,16 +46,36 @@ contract CreditLineTest is Test {
         vm.prank(TestBorrower);
         assert(CreditLineInstance.GetCreditLineAmount() == 0x42);
 
-        vm.prank(TestLender);
-
         BorrowLine memory borrowUserLine = BorrowLine(0, 0x42);
         BorrowLine[] memory borrowUserLines = new BorrowLine[](1);
         borrowUserLines[0] = borrowUserLine;
 
+        vm.prank(TestBorrower);
         CreditLineInstance.Borrow(borrowUserLines);
 
         vm.prank(TestBorrower);
         assert(CreditLineInstance.GetCreditLineAmount() == 0);
+    }
+
+    function testExpectRevertIfMoreMoneyIsRequestedThanOnTheLine() public {
+        Line memory line = Line(0x42, 0x42, 0);
+        UserLine memory userLine = UserLine(line, TestBorrower);
+        UserLine[] memory userLines = new UserLine[](1);
+        userLines[0] = userLine;
+
+        vm.prank(TestLender);
+        CreditLineInstance.Create(userLines);
+
+        vm.prank(TestBorrower);
+        assert(CreditLineInstance.GetCreditLineAmount() == 0x42);
+
+        BorrowLine memory borrowUserLine = BorrowLine(0, 0x50);
+        BorrowLine[] memory borrowUserLines = new BorrowLine[](1);
+        borrowUserLines[0] = borrowUserLine;
+
+        vm.prank(TestBorrower);
+        vm.expectRevert();
+        CreditLineInstance.Borrow(borrowUserLines);
     }
 
     function testRepayment() public {

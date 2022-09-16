@@ -1,33 +1,38 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.7;
-import '@openzeppelin/contracts/token/ERC20/ERC20.sol';
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract CreditLine {
     mapping(address => Line[]) public UserCreditLines;
 
     ERC20 private stableToken;
 
-    constructor(
-        ERC20 token
-    ) {
+    constructor(ERC20 token) {
         stableToken = token;
     }
 
     function Create(UserLine[] memory lines) external {
-        for(uint256 i = 0; i < lines.length; i++) {
+        for (uint256 i = 0; i < lines.length; i++) {
             UserLine memory line = lines[i];
             UserCreditLines[line.user].push(line.creditLine);
         }
     }
 
-    function Borrow(BorrowLine[] memory lines) external {}
+    function Borrow(BorrowLine[] memory lines) external {
+        for (uint256 i = 0; i < lines.length; i++) {
+            BorrowLine memory line = lines[i];
+            Line memory userLine = UserCreditLines[msg.sender][line.creditIndex];
+            require(line.amount <= userLine.balance);
+            UserCreditLines[msg.sender][line.creditIndex].balance -= line.amount; 
+        }
+    }
 
     function Repayment(RepaymentLine[] memory lines) external {}
 
     function GetCreditLineAmount() external view returns (uint256) {
         uint256 amount = 0;
         for (uint256 i = 0; i < UserCreditLines[msg.sender].length; i++) {
-            amount = UserCreditLines[msg.sender][i].amount;
+            amount = UserCreditLines[msg.sender][i].balance;
         }
         return amount;
     }
