@@ -1,17 +1,24 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.13;
+pragma solidity ^0.8.7;
 
 import "forge-std/Test.sol";
 import "../src/CreditLine.sol";
+import "../src/MockDai.sol";
 
 contract CreditLineTest is Test {
     CreditLine public CreditLineInstance;
+    MockDai public MockDaiInstance;
 
     address public TestBorrower = address(0x41414141);
     address public TestLender = address(0x42424242);
 
     function setUp() public {
-        CreditLineInstance = new CreditLine();
+        MockDaiInstance = new MockDai();
+        CreditLineInstance = new CreditLine(MockDaiInstance);
+
+        MockDaiInstance.mint(TestLender, 0x256);
+        vm.prank(TestLender);
+        MockDaiInstance.approve(address(CreditLineInstance), 0x100);
     }
 
     function testCreate() public {
@@ -23,6 +30,7 @@ contract CreditLineTest is Test {
         vm.prank(TestLender);
         CreditLineInstance.Create(userLines);
 
+        vm.prank(TestBorrower);
         assert(CreditLineInstance.GetCreditLineAmount() == 0x42);
     }
 
@@ -35,6 +43,7 @@ contract CreditLineTest is Test {
         vm.prank(TestLender);
         CreditLineInstance.Create(userLines);
 
+        vm.prank(TestBorrower);
         assert(CreditLineInstance.GetCreditLineAmount() == 0x42);
 
         vm.prank(TestLender);
@@ -45,9 +54,9 @@ contract CreditLineTest is Test {
 
         CreditLineInstance.Borrow(borrowUserLines);
 
+        vm.prank(TestBorrower);
         assert(CreditLineInstance.GetCreditLineAmount() == 0);
     }
-
 
     function testRepayment() public {
         Line memory line = Line(0x42, 0x42, 0);
@@ -58,6 +67,7 @@ contract CreditLineTest is Test {
         vm.prank(TestLender);
         CreditLineInstance.Create(userLines);
 
+        vm.prank(TestBorrower);
         assert(CreditLineInstance.GetCreditLineAmount() == 0x42);
 
         vm.prank(TestLender);
@@ -67,6 +77,8 @@ contract CreditLineTest is Test {
         borrowUserLines[0] = borrowUserLine;
 
         CreditLineInstance.Borrow(borrowUserLines);
+
+        vm.prank(TestBorrower);
         assert(CreditLineInstance.GetCreditLineAmount() == 0);
 
         RepaymentLine memory repaymentLine = RepaymentLine(0, 0x42);
