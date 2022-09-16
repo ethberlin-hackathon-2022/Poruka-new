@@ -11,7 +11,7 @@ contract CreditLine {
         stableToken = token;
     }
 
-    function Create(UserLine[] memory lines) external {
+    function Create(UserLine[] calldata lines) external {
         for (uint256 i = 0; i < lines.length; i++) {
             UserLine memory line = lines[i];
             require(
@@ -32,7 +32,7 @@ contract CreditLine {
         }
     }
 
-    function Borrow(BorrowLine[] memory lines) external {
+    function Borrow(BorrowLine[] calldata lines) external {
         uint256 sumAmount = 0;
         for (uint256 i = 0; i < lines.length; i++) {
             BorrowLine memory line = lines[i];
@@ -48,7 +48,7 @@ contract CreditLine {
         require(stableToken.transfer(msg.sender, sumAmount));
     }
 
-    function Repayment(RepaymentLine[] memory lines) external {
+    function Repayment(RepaymentLine[] calldata lines) external {
         uint256 sumAmount = 0;
         for (uint256 i = 0; i < lines.length; i++) {
             RepaymentLine memory line = lines[i];
