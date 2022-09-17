@@ -20,29 +20,18 @@ contract NftVoucherTest is Test {
     function setUp() public {
         MockDaiInstance = new MockDai();
         TressuaryInstance = new Treasury(TressuaryOwner);
-        CreditLineInstance = new CreditLine(MockDaiInstance, address(TressuaryInstance));
         NftVoucherInstance = new NftVoucher(MockDaiInstance);
+        CreditLineInstance = new CreditLine(MockDaiInstance, NftVoucherInstance, address(TressuaryInstance));
 
         MockDaiInstance.mint(TestLender, 100_000);
         vm.prank(TestLender);
-        MockDaiInstance.approve(address(CreditLineInstance), 100_000);
+        MockDaiInstance.approve(address(NftVoucherInstance), 100_000);
     }
 
     function testCreate() public {
-        // TODO: implement this function
-        /*
-            Creation will be based by calling the CreditLine voucher function
-            Voucher will be received with the amount deposited set.
-            Should now allow to transfer the NFT to other people ideally.
-        */
-    }
+        vm.prank(TestLender);
+        NftVoucherInstance.createVoucher(TestBorrower, 0x42);
+        assert(MockDaiInstance.balanceOf(address(NftVoucherInstance)) == 0x42);
 
-    function testHandIn() public {
-        // TODO: implement this function
-        /*
-            Should transfer the nft, and burn it.
-            Should update the credit lines based on the amount set in the NFT.
-            Should transfer the deposited amount from the ERC721, to the CreditLine contract.
-        */
     }
 }

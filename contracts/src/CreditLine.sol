@@ -3,16 +3,24 @@ pragma solidity ^0.8.7;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/utils/math/Math.sol";
 import "forge-std/console.sol";
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "./NftVoucher.sol";
 
 contract CreditLine {
     mapping(address => ActiveCreditLine[]) public UserCreditLines;
 
     ERC20 private stableToken;
+    NftVoucher private nftVouchers;
 
     address private tressuary;
 
-    constructor(ERC20 token, address _tressuary) {
-        stableToken = token;
+    constructor(
+        ERC20 _stableToken,
+        NftVoucher _nftVoucher,
+        address _tressuary
+    ) {
+        stableToken = _stableToken;
+        nftVouchers = _nftVoucher;
         tressuary = _tressuary;
     }
 
@@ -206,6 +214,22 @@ contract CreditLine {
 
     function GetOutstandingAmount() external view returns (uint256) {
         return this.GetUserOutstandingAmount(msg.sender);
+    }
+
+    function ExchangeVoucher(uint256 voucherId) external {
+        address lender = nftVouchers.getLender(voucherId);
+        uint256 amount = nftVouchers.getVoucherAmount(voucherId);
+        ActiveCreditLine memory activeLine = ActiveCreditLine({
+            lender: lender,
+            amount: amount,
+            balance: amount,
+            interestRate: 0,
+            accumulatedInterest: 0,
+            lastInterestCaluclation: block.timestamp
+        });
+        UserCreditLines[msg.sender].push(activeLine);
+
+        require(nftVouchers.handIn(address(this), voucherId) == 0);
     }
 }
 
