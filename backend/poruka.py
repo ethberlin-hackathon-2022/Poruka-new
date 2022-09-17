@@ -5,7 +5,8 @@ import tweepy
 
 app = Flask(__name__)
 
-clientT = tweepy.Client(os.getenv("TWITTER_BEARER"))
+twitterCounter = 0
+bearerToken = [os.getenv("TWITTER_BEARER"), os.getenv("TWITTER_BEARER2")]
 
 oauth1_user_handler = tweepy.OAuth1UserHandler(
         consumer_key=os.getenv("API_KEY"), consumer_secret=os.getenv("API_SEC"),
@@ -46,6 +47,7 @@ def callback():
     """
 
     global oauth1_user_handler
+    global twitterCounter
     access_token, access_token_secret = oauth1_user_handler.get_access_token(
         request.args['oauth_verifier']
     )
@@ -58,7 +60,9 @@ def callback():
     )
 
     id_ = client._get_authenticating_user_id(oauth_1=True)
+    clientT = tweepy.Client(bearerToken[twitterCounter % len(bearerToken)])
     user = clientT.get_user(id=id_, user_fields=["username", "id", "profile_image_url"])
+    twitterCounter += 1
     profile_image_url = user.data.profile_image_url
     username = user.data.username
     params = {"id": id_, "username": username, "img": profile_image_url}
@@ -82,7 +86,10 @@ def getTwitterIDs():
 
     """
     try:
+        global twitterCounter
+        clientT = tweepy.Client(bearerToken[twitterCounter % len(bearerToken)])
         twitter_ids = clientT.get_users(usernames=",".join([x.strip("@") for x in request.args["names"].split(",")]), user_fields=["id"])
+        twitterCounter += 1
         res_ids = {u.username: u.id for u in twitter_ids.data}
     except Exception as e:
         print(str(e))
@@ -109,7 +116,10 @@ def getTwitterNames():
 
     """
     try:
+        global twitterCounter
+        clientT = tweepy.Client(bearerToken[twitterCounter % len(bearerToken)])
         twitter_names = clientT.get_users(ids=",".join([str(x) for x in request.args["ids"].split(",")]), user_fields=["username"])
+        twitterCounter += 1
         res_names = {u.id: u.username for u in twitter_names.data}
     except Exception as e:
         print(str(e))
@@ -146,9 +156,12 @@ def get_follower():
     """
     try:
         following = {}
+        global twitterCounter
+        clientT = tweepy.Client(bearerToken[twitterCounter % len(bearerToken)])
         for response in tweepy.Paginator(clientT.get_users_following, request.args["id"], user_fields=["username", "id", "profile_image_url"], max_results=1000):
             if response.data:
                 following = {**following, **{u.username: {"id": u.id, "img": u.profile_image_url} for u in response.data}}
+        twitterCounter += 1
         response = make_response({"result": following}, 200)
     except Exception as e:
         print(e)
