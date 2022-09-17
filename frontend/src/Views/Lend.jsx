@@ -24,10 +24,11 @@ export default function Lend({ allFollowers, setAllFollowers, twitterId }) {
   const handleAdd = (i, e) => {
     let newElement = [...listPeople];
     newElement[i][e.target.name] = e.target.value;
-    SetListPeople(newElement);
+    setListPeople(newElement);
   };
 
   const handlePrint = () => {
+    console.log("check");
     console.log(allFollowers);
   };
 
@@ -62,7 +63,7 @@ export default function Lend({ allFollowers, setAllFollowers, twitterId }) {
           </p>
           <button
             className="inline-flex items-center rounded-md border border-transparent bg-blue-700 px-4 py-2 text-sm font-medium text-white"
-            onClick={handlePrint()}
+            onClick={() => handlePrint()}
           >
             Check
           </button>
