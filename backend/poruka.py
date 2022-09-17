@@ -17,7 +17,7 @@ def twitterauth():
     global oauth1_user_handler
     oauth1_user_handler = tweepy.OAuth1UserHandler(
         consumer_key=os.getenv("API_KEY"), consumer_secret=os.getenv("API_SEC"),
-        callback="http://localhost:5000/callback"
+        callback="https://givewithporuka.pythonanywhere.com/callback"
     )
 
     url = oauth1_user_handler.get_authorization_url(signin_with_twitter=True)
