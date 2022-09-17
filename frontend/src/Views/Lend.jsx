@@ -88,23 +88,23 @@ export default function Lend({ allFollowers, setAllFollowers, twitterId }) {
               </div>
               <ul role="list" className="divide-y divide-gray-200">
                 {allFollowers?.map((person) => (
-                  <li key={person.id} className="flex py-4">
+                  <li key={person[0].id} className="flex py-4">
                     <div className="flex w-full justify-between">
                       <div className="flex">
                         <img
                           className="h-10 w-10 rounded-full"
                           src={
-                            person.img ||
+                            person[0].img ||
                             "https://pbs.twimg.com/profile_images/378800000857919980/lHqPIZza_normal.png"
                           }
                           alt=""
                         />
                         <div className="ml-3">
                           <p className="text-sm font-medium text-gray-900">
-                            {person.username || "oo"}
+                            {person[0].username || "oo"}
                           </p>
                           <p className="text-sm text-gray-500">
-                            {person.id || "ouou"}
+                            {person[0].id || "ouou"}
                           </p>
                         </div>
                       </div>
