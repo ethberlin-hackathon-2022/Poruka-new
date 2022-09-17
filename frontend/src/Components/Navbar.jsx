@@ -16,15 +16,13 @@ export default function Navbar({
   };
 
   useEffect(() => {
-    if (window.location.href) {
-      var url = new URL(window.location.href);
-      var id = url.searchParams.get("id");
-      var username = url.searchParams.get("username");
-      var img = url.searchParams.get("img");
-      console.log("id:", id);
-      console.log("username:", username);
-      console.log("img:", img);
-    }
+    var url = new URL(window.location.href);
+    var id = url.searchParams.get("id");
+    var username = url.searchParams.get("username");
+    var img = url.searchParams.get("img");
+    console.log("id:", id);
+    console.log("username:", username);
+    console.log("img:", img);
   }, []);
 
   return (
