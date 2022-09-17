@@ -298,6 +298,14 @@ contract CreditLineTest is Test {
         // TODO: implement this function
     }
 
+    function testShouldMintAnNftToBorrowerWhenCreditLineIsPaidBack() public {
+        // TODO: implement this function
+    }
+
+    function testShouldBePossibleForLenderToWithdrawTheMoneyIfNotBeingBorrowed() public {
+        // TODO: implement this function
+    }
+
     function testShouldPutInterestIntoTressuary() public {
         // 2022-01-01 22:00:00 GMT+0100
         vm.warp(1641070800);
