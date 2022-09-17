@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.7;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/utils/math/Math.sol";
 import "forge-std/console.sol";
 
 contract CreditLine {
@@ -8,8 +9,11 @@ contract CreditLine {
 
     ERC20 private stableToken;
 
-    constructor(ERC20 token) {
+    address private tressuary;
+
+    constructor(ERC20 token, address _tressuary) {
         stableToken = token;
+        tressuary = _tressuary;
     }
 
     function Create(UserLine[] calldata lines) external {
@@ -20,6 +24,7 @@ contract CreditLine {
             sumAmount += line.creditLine.amount;
 
             ActiveCreditLine memory activeLine = ActiveCreditLine({
+                lender: msg.sender,
                 amount: line.creditLine.amount,
                 balance: line.creditLine.amount,
                 interestRate: line.creditLine.interestRate,
@@ -50,6 +55,10 @@ contract CreditLine {
 
     function Repayment(RepaymentLine[] calldata lines) external {
         uint256 sumAmount = 0;
+        uint256 tressuaryAmount = 0;
+        LenderInterestRepayment[]
+            memory lenderAmount = new LenderInterestRepayment[](lines.length);
+
         for (uint256 i = 0; i < lines.length; i++) {
             RepaymentLine memory line = lines[i];
             uint256 outstandingBalance = UserCreditLines[msg.sender][
@@ -58,8 +67,14 @@ contract CreditLine {
             ActiveCreditLine memory creditLine = UserCreditLines[msg.sender][
                 line.creditIndex
             ];
-            UserCreditLines[msg.sender][line.creditIndex].balance += line
-                .amount;
+            uint256 lineBalance = line.amount;
+            uint256 deltaLine = Math.min(
+                line.amount,
+                UserCreditLines[msg.sender][line.creditIndex].amount -
+                    UserCreditLines[msg.sender][line.creditIndex].balance
+            );
+            UserCreditLines[msg.sender][line.creditIndex].balance += deltaLine;
+            lineBalance -= deltaLine;
 
             if (creditLine.interestRate != 0) {
                 uint256 secondsInAyear = 3600 * 24 * 365;
@@ -82,9 +97,45 @@ contract CreditLine {
                     .accumulatedInterest += accumulatedInterest;
             }
 
+            if (
+                UserCreditLines[msg.sender][line.creditIndex].balance ==
+                UserCreditLines[msg.sender][line.creditIndex].amount &&
+                lineBalance > 0
+            ) {
+                uint256 interestPaid = Math.min(
+                    lineBalance,
+                    UserCreditLines[msg.sender][line.creditIndex]
+                        .accumulatedInterest
+                );
+                UserCreditLines[msg.sender][line.creditIndex]
+                    .accumulatedInterest -= interestPaid;
+                uint256 halfInterestPaid = (interestPaid * 1) / 2;
+                tressuaryAmount += halfInterestPaid;
+                lenderAmount[i] = LenderInterestRepayment({
+                    lender: UserCreditLines[msg.sender][line.creditIndex]
+                        .lender,
+                    amount: halfInterestPaid
+                });
+                lineBalance -= interestPaid;
+            }
+
             sumAmount += line.amount;
         }
         require(stableToken.transferFrom(msg.sender, address(this), sumAmount));
+
+        if (tressuaryAmount > 0) {
+            require(
+                stableToken.transferFrom(msg.sender, tressuary, tressuaryAmount)
+            );
+        }
+
+        for (uint256 i = 0; i < lenderAmount.length; i++) {
+            if (lenderAmount[i].amount != 0) {
+                require(
+                    stableToken.transferFrom(msg.sender, lenderAmount[i].lender, lenderAmount[i].amount)
+                );
+            }
+        }
     }
 
     function Update(UpdateCreditLine[] memory lines) external {
@@ -149,6 +200,7 @@ struct ActiveCreditLine {
     uint256 accumulatedInterest;
     uint256 interestRate;
     uint256 lastInterestCaluclation;
+    address lender;
 }
 
 struct UserLine {
@@ -171,4 +223,9 @@ struct BorrowLine {
 struct RepaymentLine {
     uint256 creditIndex;
     uint256 amount;
+}
+
+struct LenderInterestRepayment {
+    uint256 amount;
+    address lender;
 }

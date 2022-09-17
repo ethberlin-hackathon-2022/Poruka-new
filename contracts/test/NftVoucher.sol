@@ -5,19 +5,23 @@ import "forge-std/Test.sol";
 import "../src/CreditLine.sol";
 import "../src/MockDai.sol";
 import "../src/NftVoucher.sol";
+import "../src/Treasury.sol";
 
 contract NftVoucherTest is Test {
     CreditLine public CreditLineInstance;
     MockDai public MockDaiInstance;
     NftVoucher public NftVoucherInstance;
+    Treasury public TressuaryInstance;
 
     address public TestBorrower = address(0x41414141);
     address public TestLender = address(0x42424242);
+    address public TressuaryOwner = address(0x43434343);
 
     function setUp() public {
         MockDaiInstance = new MockDai();
-        CreditLineInstance = new CreditLine(MockDaiInstance);
-        NftVoucherInstance = new NftVoucher();
+        TressuaryInstance = new Treasury(TressuaryOwner);
+        CreditLineInstance = new CreditLine(MockDaiInstance, address(TressuaryInstance));
+        NftVoucherInstance = new NftVoucher(MockDaiInstance);
 
         MockDaiInstance.mint(TestLender, 100_000);
         vm.prank(TestLender);
@@ -33,11 +37,12 @@ contract NftVoucherTest is Test {
         */
     }
 
-    function testExchange() public {
+    function testHandIn() public {
         // TODO: implement this function
         /*
             Should transfer the nft, and burn it.
             Should update the credit lines based on the amount set in the NFT.
+            Should transfer the deposited amount from the ERC721, to the CreditLine contract.
         */
     }
 }

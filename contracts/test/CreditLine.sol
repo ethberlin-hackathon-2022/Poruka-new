@@ -4,18 +4,22 @@ pragma solidity ^0.8.7;
 import "forge-std/Test.sol";
 import "../src/CreditLine.sol";
 import "../src/MockDai.sol";
+import "../src/Treasury.sol";
 import "forge-std/console.sol";
 
 contract CreditLineTest is Test {
     CreditLine public CreditLineInstance;
     MockDai public MockDaiInstance;
+    Treasury public TressuaryInstance;
 
     address public TestBorrower = address(0x41414141);
     address public TestLender = address(0x42424242);
+    address public TressuaryOwner = address(0x43434343);
 
     function setUp() public {
         MockDaiInstance = new MockDai();
-        CreditLineInstance = new CreditLine(MockDaiInstance);
+        TressuaryInstance = new Treasury(TressuaryOwner);
+        CreditLineInstance = new CreditLine(MockDaiInstance, address(TressuaryInstance));
 
         MockDaiInstance.mint(TestLender, 100_000);
         vm.prank(TestLender);
@@ -350,9 +354,17 @@ contract CreditLineTest is Test {
         repaymentInterestLines[0] = repaymentInterestLine;
 
         vm.prank(TestBorrower);
+
+        MockDaiInstance.increaseAllowance(address(CreditLineInstance), 100_000);
+        MockDaiInstance.mint(TestBorrower, 2_000);
+
+        vm.prank(TestBorrower);
         CreditLineInstance.Repayment(repaymentInterestLines);
         uint256 updatedInterestBalance = CreditLineInstance.GetOutstandingAmount();
         assert(updatedInterestBalance == 0);
+
+        assert(499 <= MockDaiInstance.balanceOf(address(TressuaryInstance)));
+        assert(499 <= MockDaiInstance.balanceOf(address(TestLender)));
     }
 
     function testShouldBePossibleToUseNftVoucherForOnBoarding() public {
