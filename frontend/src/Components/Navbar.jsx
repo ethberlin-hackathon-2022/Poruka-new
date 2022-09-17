@@ -1,6 +1,6 @@
 import { ReactComponent as Logo } from "../Images/navlogo.svg";
 import axios from "axios";
-import { redirect } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export default function Navbar({
   connectWallet,
@@ -8,7 +8,7 @@ export default function Navbar({
   isConnected,
 }) {
   const connectTwitter = async () => {
-    axios.get("https://givewithporuka.pythonanywhere.com/auth").then((res) => {
+    axios.get("https://localhost:5000/auth").then((res) => {
       console.log(res);
       window.open(res.data.url);
     });
@@ -22,10 +22,12 @@ export default function Navbar({
           aria-label="Top"
         >
           <div className="w-full py-4 flex items-center justify-between">
-            <div className="flex items-center text-black font-phosphate text-3xl">
-              <Logo height={50} width={50} />
-              <div className="ml-3 text-3xl">Poruka</div>
-            </div>
+            <Link to="/">
+              <div className="flex items-center text-black font-phosphate text-3xl">
+                <Logo height={50} width={50} />
+                <div className="ml-3 text-3xl">Poruka</div>
+              </div>
+            </Link>
             {isConnected ? (
               <button
                 type="button"

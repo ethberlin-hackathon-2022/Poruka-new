@@ -18,6 +18,18 @@ function App() {
   const [web3Modal, setWeb3Modal] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
 
+  useEffect(() => {
+    if (window.location.href) {
+      var url = new URL(window.location.href);
+      var id = url.searchParams.get("id");
+      var username = url.searchParams.get("username");
+      var img = url.searchParams.get("img");
+      console.log("id:", id);
+      console.log("username:", username);
+      console.log("img:", img);
+    }
+  }, []);
+
   const addListeners = (provider) => {
     provider.on("chainChanged", (chainId) => {
       console.log(`chain changed to ${chainId}! updating providers`);
@@ -116,6 +128,7 @@ function App() {
       />
       <Routes>
         <Route path="/" element={<Landing />} />
+        <Route path="/*" element={<Landing />} />
         <Route path="lend" element={<Lend />} />
       </Routes>
     </>
