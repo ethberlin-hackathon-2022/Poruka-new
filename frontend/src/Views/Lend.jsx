@@ -6,6 +6,8 @@ import fetchFollowers from "../helpers/fetchFollowers";
 import { useEffect } from "react";
 
 export default function Lend({ allFollowers, setAllFollowers, twitterId }) {
+  const [listPeople, setListPeople] = useState([]);
+
   useEffect(() => {
     try {
       const fetchAll = async () => {
