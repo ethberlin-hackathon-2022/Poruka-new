@@ -10,7 +10,7 @@ contract NftVoucher is ERC721 {
 
     constructor() ERC721("CreditVoucher", "CV") {}
 
-    function createVoucher(address receiver) public returns (uint256) {
+    function createVoucher(address receiver) external returns (uint256) {
         _tokenIds.increment();
 
         uint256 newItemId = _tokenIds.current();

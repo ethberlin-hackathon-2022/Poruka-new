@@ -180,12 +180,12 @@ contract CreditLineTest is Test {
         assert(MockDaiInstance.balanceOf(address(TestBorrower)) == 0x0);
 
         vm.prank(TestBorrower);
-        uint256 feeBalance = CreditLineInstance.GetOutstandingAmount();
+        uint256 interestBalance = CreditLineInstance.GetOutstandingAmount();
 
         /*
             10_000 * 10% = 1000 over one year
         */
-        assert((1000 - feeBalance ) <= 1);
+        assert((1000 - interestBalance ) <= 1);
     }
 
     function testShouldBePossibleToUpdateAGivenCreditLineWithHigherAmount() public {
@@ -208,16 +208,75 @@ contract CreditLineTest is Test {
         updateLines[0].amount = 0x82;
         updateLines[0].user = TestBorrower;
 
-        vm.prank(TestBorrower);
-        console.log(CreditLineInstance.GetCreditLineAmount());
-
         vm.prank(TestLender);
         CreditLineInstance.Update(updateLines);
 
         vm.prank(TestBorrower);
-        console.log(CreditLineInstance.GetCreditLineAmount());
-        vm.prank(TestBorrower);
         assert(CreditLineInstance.GetCreditLineAmount() == 0x82);
+    }
+
+
+    function testShouldNotBePossibleToUpdateAGivenCreditLineWithHigherInterestLineIfBorrowing() public {
+        Line memory line = Line({
+            amount: 0x42,
+            interestRate: 0
+        });
+        UserLine memory userLine = UserLine(line, TestBorrower);
+        UserLine[] memory userLines = new UserLine[](1);
+        userLines[0] = userLine;
+
+        vm.prank(TestLender);
+        CreditLineInstance.Create(userLines);
+
+        vm.prank(TestBorrower);
+        assert(CreditLineInstance.GetCreditLineAmount() == 0x42);
+
+        BorrowLine memory borrowUserLine = BorrowLine(0, 0x42);
+        BorrowLine[] memory borrowUserLines = new BorrowLine[](1);
+        borrowUserLines[0] = borrowUserLine;
+
+        vm.prank(TestBorrower);
+        CreditLineInstance.Borrow(borrowUserLines);
+
+        UpdateCreditLine[] memory updateLines = new UpdateCreditLine[](1);
+        updateLines[0].creditIndex = 0;
+        updateLines[0].amount = 0x82;
+        updateLines[0].user = TestBorrower;
+        updateLines[0].interestRate = 10;
+
+        vm.prank(TestLender);
+        vm.expectRevert();
+        CreditLineInstance.Update(updateLines);
+    }
+
+    function testShouldBePossibleToIncreaseInterestIfNoBorrowingIsActiveOnTheCreditLine() public {
+        Line memory line = Line({
+            amount: 0x42,
+            interestRate: 0
+        });
+        UserLine memory userLine = UserLine(line, TestBorrower);
+        UserLine[] memory userLines = new UserLine[](1);
+        userLines[0] = userLine;
+
+        vm.prank(TestLender);
+        CreditLineInstance.Create(userLines);
+
+        vm.prank(TestBorrower);
+        assert(CreditLineInstance.GetCreditLineAmount() == 0x42);
+
+        BorrowLine memory borrowUserLine = BorrowLine(0, 0x42);
+        BorrowLine[] memory borrowUserLines = new BorrowLine[](1);
+        borrowUserLines[0] = borrowUserLine;
+
+
+        UpdateCreditLine[] memory updateLines = new UpdateCreditLine[](1);
+        updateLines[0].creditIndex = 0;
+        updateLines[0].amount = 0x82;
+        updateLines[0].user = TestBorrower;
+        updateLines[0].interestRate = 10;
+
+        vm.prank(TestLender);
+        CreditLineInstance.Update(updateLines);
     }
 
     function testShouldBePossibleToUpdateAGivenCreditLineWithLowerAmountIfNotAmountIsNotBorrowed() public {
@@ -233,7 +292,67 @@ contract CreditLineTest is Test {
     }
 
     function testShouldPutInterestIntoTressuary() public {
-        // TODO: implement this function
+        // 2022-01-01 22:00:00 GMT+0100
+        vm.warp(1641070800);
+        Line memory line = Line({
+            amount: 10_000,
+            // percentage interest rate
+            interestRate: 10
+        });
+
+        UserLine memory userLine = UserLine(line, TestBorrower);
+        UserLine[] memory userLines = new UserLine[](1);
+        userLines[0] = userLine;
+
+        vm.prank(TestLender);
+        CreditLineInstance.Create(userLines);
+
+        vm.prank(TestBorrower);
+        assert(CreditLineInstance.GetCreditLineAmount() == 10_000);
+
+        BorrowLine memory borrowUserLine = BorrowLine(0, 10_000);
+        BorrowLine[] memory borrowUserLines = new BorrowLine[](1);
+        borrowUserLines[0] = borrowUserLine;
+
+        vm.prank(TestBorrower);
+        CreditLineInstance.Borrow(borrowUserLines);
+        vm.prank(TestBorrower);
+        assert(CreditLineInstance.GetCreditLineAmount() == 0);
+
+        RepaymentLine memory repaymentLine = RepaymentLine(0, 10_000);
+        RepaymentLine[] memory repaymentLines = new RepaymentLine[](1);
+        repaymentLines[0] = repaymentLine;
+
+        vm.prank(TestBorrower);
+        MockDaiInstance.increaseAllowance(address(CreditLineInstance), 10_000);
+
+        vm.prank(TestBorrower);
+        // 2023-01-01 22:00:00 GMT+0100
+        vm.warp(1672603200);
+        CreditLineInstance.Repayment(repaymentLines);
+
+        vm.prank(TestBorrower);
+        assert(CreditLineInstance.GetCreditLineAmount() == 10_000);
+
+        assert(MockDaiInstance.balanceOf(address(CreditLineInstance)) == 10_000);
+        assert(MockDaiInstance.balanceOf(address(TestBorrower)) == 0x0);
+
+        vm.prank(TestBorrower);
+        uint256 interestBalance = CreditLineInstance.GetOutstandingAmount();
+
+        /*
+            10_000 * 10% = 1000 over one year
+        */
+        assert((1000 - interestBalance ) <= 1);
+
+        RepaymentLine memory repaymentInterestLine = RepaymentLine(0, 1_000);
+        RepaymentLine[] memory repaymentInterestLines = new RepaymentLine[](1);
+        repaymentInterestLines[0] = repaymentInterestLine;
+
+        vm.prank(TestBorrower);
+        CreditLineInstance.Repayment(repaymentInterestLines);
+        uint256 updatedInterestBalance = CreditLineInstance.GetOutstandingAmount();
+        assert(updatedInterestBalance == 0);
     }
 
     function testShouldBePossibleToUseNftVoucherForOnBoarding() public {

@@ -13,15 +13,12 @@ contract CreditLine {
     }
 
     function Create(UserLine[] calldata lines) external {
+        uint256 sumAmount = 0;
         for (uint256 i = 0; i < lines.length; i++) {
             UserLine memory line = lines[i];
-            require(
-                stableToken.transferFrom(
-                    msg.sender,
-                    address(this),
-                    line.creditLine.amount
-                )
-            );
+
+            sumAmount += line.creditLine.amount;
+
             ActiveCreditLine memory activeLine = ActiveCreditLine({
                 amount: line.creditLine.amount,
                 balance: line.creditLine.amount,
@@ -31,6 +28,8 @@ contract CreditLine {
             });
             UserCreditLines[line.user].push(activeLine);
         }
+
+        require(stableToken.transferFrom(msg.sender, address(this), sumAmount));
     }
 
     function Borrow(BorrowLine[] calldata lines) external {
@@ -94,11 +93,22 @@ contract CreditLine {
         for (uint256 i = 0; i < lines.length; i++) {
             UpdateCreditLine memory line = lines[i];
 
+            uint256 currentLineAmount = UserCreditLines[line.user][
+                line.creditIndex
+            ].amount;
+            uint256 currentLineBalance = UserCreditLines[line.user][
+                line.creditIndex
+            ].balance;
+
+            require(
+                line.interestRate == 0 ||
+                    (line.interestRate != 0 &&
+                        currentLineBalance == currentLineAmount)
+            );
+
             UserCreditLines[line.user][line.creditIndex].amount = line.amount;
-            UserCreditLines[line.user][line.creditIndex].balance += (line.amount - UserCreditLines[line.user][line.creditIndex].balance);
-            /*
-                TODO: Should not be possible to update the interest if borrowing is active.
-            */
+            UserCreditLines[line.user][line.creditIndex].balance += (line
+                .amount - currentLineBalance);
         }
     }
 
@@ -150,6 +160,7 @@ struct UpdateCreditLine {
     address user;
     uint256 creditIndex;
     uint256 amount;
+    uint256 interestRate;
 }
 
 struct BorrowLine {

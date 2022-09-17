@@ -10,7 +10,7 @@ contract Treasury is AccessControl {
         _setupRole(ADMIN_ROLE, ADMIN);
     }
 
-    function withdraw(uint256 amount) public payable {
+    function withdraw(uint256 amount) external payable {
         require(hasRole(ADMIN_ROLE, msg.sender), "Caller is not a ADMIN");
         address payable receiver = payable(msg.sender);
         receiver.transfer(amount);
