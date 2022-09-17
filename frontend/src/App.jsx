@@ -22,6 +22,7 @@ function App() {
   const [web3Modal, setWeb3Modal] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
   const [isTwitterConnected, setIsTwitterConnected] = useState(false);
+  const [twitterId, setTwitterId] = useState(0);
   const navigate = useNavigate();
 
   const addListeners = (provider) => {
@@ -93,6 +94,8 @@ function App() {
     const isTwitter = await isTwitterResolved(address);
     if (isTwitter !== "") {
       setIsTwitterConnected(true);
+      const id = isTwitter.id;
+      setTwitterId(id);
     }
     setIsConnected(true);
     console.log("end");
@@ -136,6 +139,8 @@ function App() {
               connectWallet={connectWallet}
               isConnected={isConnected}
               isTwitterConnected={isTwitterConnected}
+              twitterId={twitterId}
+              setTwitterId={setTwitterId}
             />
           }
         />
