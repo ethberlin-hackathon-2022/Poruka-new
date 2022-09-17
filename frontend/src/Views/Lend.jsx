@@ -10,12 +10,16 @@ export default function Lend({ allFollowers, setAllFollowers, twitterId }) {
 
   useEffect(() => {
     if (twitterId) {
-      const fetchAll = async () => {
-        const result = await fetchFollowers(twitterId);
-        console.log("result", result);
-        setAllFollowers(result);
-      };
-      fetchAll();
+      try {
+        const fetchAll = async () => {
+          const result = await fetchFollowers(twitterId);
+          console.log("result", result);
+          setAllFollowers(result);
+        };
+        fetchAll();
+      } catch (error) {
+        console.log(error);
+      }
     }
   }, [twitterId, setAllFollowers]);
 
