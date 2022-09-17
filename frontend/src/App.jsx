@@ -25,6 +25,7 @@ function App() {
   const [isTwitterConnected, setIsTwitterConnected] = useState(false);
   const [twitterId, setTwitterId] = useState(0);
   const navigate = useNavigate();
+  const [allFollowers, setAllFollowers] = useState({});
 
   const addListeners = (provider) => {
     provider.on("chainChanged", (chainId) => {
@@ -90,10 +91,7 @@ function App() {
     setConnectedNetwork(network.name);
     const address = await signer.getAddress();
     setAddress(address);
-    console.log(address);
-    console.log("result from IDriss:", await isTwitterResolved(address));
     const isTwitter = await isTwitterResolved(address);
-    console.log("Is Twitter ???==", isTwitter);
     if (isTwitter !== "") {
       setIsTwitterConnected(true);
       const handle = isTwitter;
@@ -134,7 +132,16 @@ function App() {
       />
       <Routes>
         <Route path="/" element={<Landing />} />
-        <Route path="lend" element={<Lend />} />
+        <Route
+          path="lend"
+          element={
+            <Lend
+              allFollowers={allFollowers}
+              twitterId={twitterId}
+              setAllFollowers={setAllFollowers}
+            />
+          }
+        />
         <Route
           path="connect"
           element={
@@ -145,6 +152,8 @@ function App() {
               setIsTwitterConnected={setIsTwitterConnected}
               twitterId={twitterId}
               setTwitterId={setTwitterId}
+              allFollowers={allFollowers}
+              setAllFollowers={setAllFollowers}
             />
           }
         />
