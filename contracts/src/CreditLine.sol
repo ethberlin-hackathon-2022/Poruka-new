@@ -49,12 +49,11 @@ contract CreditLine {
         uint256 sumAmount = 0;
         for (uint256 i = 0; i < lines.length; i++) {
             BorrowLine memory line = lines[i];
-            ActiveCreditLine memory userLine = UserCreditLines[msg.sender][
+            ActiveCreditLine storage userLine = UserCreditLines[msg.sender][
                 line.creditIndex
             ];
             require(line.amount <= userLine.balance);
-            UserCreditLines[msg.sender][line.creditIndex].balance -= line
-                .amount;
+            userLine.balance -= line.amount;
 
             sumAmount += line.amount;
         }
@@ -72,16 +71,15 @@ contract CreditLine {
             uint256 outstandingBalance = UserCreditLines[msg.sender][
                 line.creditIndex
             ].amount - UserCreditLines[msg.sender][line.creditIndex].balance;
-            ActiveCreditLine memory creditLine = UserCreditLines[msg.sender][
+            ActiveCreditLine storage creditLine = UserCreditLines[msg.sender][
                 line.creditIndex
             ];
             uint256 lineBalance = line.amount;
             uint256 deltaLine = Math.min(
                 line.amount,
-                UserCreditLines[msg.sender][line.creditIndex].amount -
-                    UserCreditLines[msg.sender][line.creditIndex].balance
+                creditLine.amount - creditLine.balance
             );
-            UserCreditLines[msg.sender][line.creditIndex].balance += deltaLine;
+            creditLine.balance += deltaLine;
             lineBalance -= deltaLine;
 
             if (creditLine.interestRate != 0) {
@@ -90,38 +88,28 @@ contract CreditLine {
                 //       However that would be gas costly, so we doing it this way for now.
                 uint256 power = 10**16;
                 uint256 deltaTime = block.timestamp -
-                    UserCreditLines[msg.sender][line.creditIndex]
-                        .lastInterestCaluclation;
-                uint256 interestRate = UserCreditLines[msg.sender][
-                    line.creditIndex
-                ].interestRate;
+                    creditLine.lastInterestCaluclation;
+                uint256 interestRate = creditLine.interestRate;
                 uint256 interestPerYear = (interestRate * power) /
                     secondsInAyear;
                 uint256 accumulatedInterest = ((outstandingBalance *
                     (interestPerYear) *
                     deltaTime) / (power * 10**2));
 
-                UserCreditLines[msg.sender][line.creditIndex]
-                    .accumulatedInterest += accumulatedInterest;
+                creditLine.accumulatedInterest += accumulatedInterest;
             }
 
-            if (
-                UserCreditLines[msg.sender][line.creditIndex].balance ==
-                UserCreditLines[msg.sender][line.creditIndex].amount &&
-                lineBalance > 0
-            ) {
+            if (creditLine.balance == creditLine.amount && lineBalance > 0) {
                 uint256 interestPaid = Math.min(
                     lineBalance,
-                    UserCreditLines[msg.sender][line.creditIndex]
-                        .accumulatedInterest
+                    creditLine.accumulatedInterest
                 );
-                UserCreditLines[msg.sender][line.creditIndex]
-                    .accumulatedInterest -= interestPaid;
+                creditLine.accumulatedInterest -= interestPaid;
                 uint256 halfInterestPaid = (interestPaid * 1) / 2;
+
                 tressuaryAmount += halfInterestPaid;
                 lenderAmount[i] = LenderInterestRepayment({
-                    lender: UserCreditLines[msg.sender][line.creditIndex]
-                        .lender,
+                    lender: creditLine.lender,
                     amount: halfInterestPaid
                 });
                 lineBalance -= interestPaid;
@@ -155,13 +143,11 @@ contract CreditLine {
         //       but should not be possible to edit the interst rate if there is an active borrow.
         for (uint256 i = 0; i < lines.length; i++) {
             UpdateCreditLine memory line = lines[i];
-
-            uint256 currentLineAmount = UserCreditLines[line.user][
-                line.creditIndex
-            ].amount;
-            uint256 currentLineBalance = UserCreditLines[line.user][
-                line.creditIndex
-            ].balance;
+            ActiveCreditLine storage userCreditLines = UserCreditLines[
+                line.user
+            ][line.creditIndex];
+            uint256 currentLineAmount = userCreditLines.amount;
+            uint256 currentLineBalance = userCreditLines.balance;
 
             require(
                 line.interestRate == 0 ||
@@ -169,9 +155,8 @@ contract CreditLine {
                         currentLineBalance == currentLineAmount)
             );
 
-            UserCreditLines[line.user][line.creditIndex].amount = line.amount;
-            UserCreditLines[line.user][line.creditIndex].balance += (line
-                .amount - currentLineBalance);
+            userCreditLines.amount = line.amount;
+            userCreditLines.balance += (line.amount - currentLineBalance);
         }
     }
 
