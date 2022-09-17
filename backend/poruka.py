@@ -1247,7 +1247,7 @@ def get_follower():
         #     if response.data:
         #         following = {**following, **{u.username: {"id": u.id, "img": u.profile_image_url} for u in response.data}}
         # twitterCounter += 1
-        response = make_response({"result": dummyRet}, 200)
+        response = make_response(dummyRet, 200)
     except Exception as e:
         print(e)
         following = {}
