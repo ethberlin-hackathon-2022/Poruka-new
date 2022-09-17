@@ -2,7 +2,11 @@ import { useEffect } from "react";
 import axios from "axios";
 import { ChatBubbleLeftIcon } from "@heroicons/react/24/outline";
 
-export default function ConnectTwitter() {
+export default function ConnectTwitter({
+  twitterId,
+  allFollowers,
+  setTwitterId,
+}) {
   const connectTwitter = async () => {
     axios.get("https://givewithporuka.pythonanywhere.com/auth").then((res) => {
       console.log(res);
@@ -15,6 +19,7 @@ export default function ConnectTwitter() {
     var id = url.searchParams.get("id");
     var username = url.searchParams.get("username");
     var img = url.searchParams.get("img");
+    setTwitterId(id);
     console.log("id:", id);
     console.log("username:", username);
     console.log("img:", img);

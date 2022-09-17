@@ -1,19 +1,40 @@
 import { WalletIcon } from "@heroicons/react/24/outline";
 import Lend from "./Lend";
 import ConnectTwitter from "../Components/ConnectTwitter";
+import fetchFollowers from "../helpers/fetchFollowers";
+import { useEffect, useState } from "react";
 
 export default function Connect({
   connectWallet,
   isConnected,
   isTwitterConnected,
+  twitterId,
+  setTwitterId,
 }) {
+  const [allFollowers, setAllFollowers] = useState([]);
+
+  useEffect(() => {
+    if (twitterId !== 0) {
+      const fetchAll = async () => {
+        const result = await fetchFollowers(twitterId);
+        console.log("result", result);
+        return result;
+      };
+      fetchAll();
+    }
+  }, [twitterId]);
+
   return (
     <>
       {isConnected ? (
         isTwitterConnected ? (
           <Lend />
         ) : (
-          <ConnectTwitter />
+          <ConnectTwitter
+            twitterId={twitterId}
+            allFollowers={allFollowers}
+            setTwitterId={setTwitterId}
+          />
         )
       ) : (
         <div className="flex mx-20 mt-20">
