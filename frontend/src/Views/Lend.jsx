@@ -6,8 +6,6 @@ import fetchFollowers from "../helpers/fetchFollowers";
 import { useEffect } from "react";
 
 export default function Lend({ allFollowers, setAllFollowers, twitterId }) {
-  const [listPeople, SetListPeople] = useState([]);
-
   useEffect(() => {
     try {
       const fetchAll = async () => {
@@ -25,6 +23,10 @@ export default function Lend({ allFollowers, setAllFollowers, twitterId }) {
     let newElement = [...listPeople];
     newElement[i][e.target.name] = e.target.value;
     SetListPeople(newElement);
+  };
+
+  const handlePrint = () => {
+    console.log(allFollowers);
   };
 
   const people = [
@@ -56,6 +58,12 @@ export default function Lend({ allFollowers, setAllFollowers, twitterId }) {
           <p className="text-xl font-light leading-10">
             Select from the list of people you follow on Twitter
           </p>
+          <button
+            className="inline-flex items-center rounded-md border border-transparent bg-blue-700 px-4 py-2 text-sm font-medium text-white"
+            onClick={handlePrint()}
+          >
+            Check
+          </button>
         </div>
         <div className="flex justify-center mt-5">
           <div className="overflow-hidden rounded-lg bg-white shadow mr-10 w-full">
