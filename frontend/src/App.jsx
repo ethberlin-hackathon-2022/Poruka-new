@@ -1,12 +1,16 @@
 import "./App.css";
 import Landing from "./Views/Landing";
+import { Routes, Route } from "react-router-dom";
+import React from "react";
+import { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import Web3Modal from "web3modal";
-import { Routes, Route, Link } from "react-router-dom";
 import WalletConnectProvider from "@walletconnect/web3-provider";
-import React, { useEffect, useState } from "react";
-import Navbar from "./Components/Navbar";
+import { useNavigate } from "react-router-dom";
 import Lend from "./Views/Lend";
+import Connect from "./Views/Connect";
+import Navbar from "./Components/Navbar";
+import isTwitterResolved from "./helpers/isTwitterResolved";
 
 const INFURA_ID = "f17f31ea210e43ca91b886804c49a9b8";
 
@@ -17,6 +21,8 @@ function App() {
   const [connectedNetwork, setConnectedNetwork] = useState();
   const [web3Modal, setWeb3Modal] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
+  const [isTwitterConnected, setIsTwitterConnected] = useState(false);
+  const navigate = useNavigate();
 
   const addListeners = (provider) => {
     provider.on("chainChanged", (chainId) => {
@@ -82,6 +88,12 @@ function App() {
     setConnectedNetwork(network.name);
     const address = await signer.getAddress();
     setAddress(address);
+    console.log(address);
+    console.log("result from IDriss:", await isTwitterResolved(address));
+    const isTwitter = await isTwitterResolved(address);
+    if (isTwitter !== "") {
+      setIsTwitterConnected(true);
+    }
     setIsConnected(true);
     console.log("end");
   }
@@ -117,6 +129,16 @@ function App() {
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="lend" element={<Lend />} />
+        <Route
+          path="connect"
+          element={
+            <Connect
+              connectWallet={connectWallet}
+              isConnected={isConnected}
+              isTwitterConnected={isTwitterConnected}
+            />
+          }
+        />
       </Routes>
     </>
   );

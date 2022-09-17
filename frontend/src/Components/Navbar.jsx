@@ -1,17 +1,70 @@
 import { ReactComponent as Logo } from "../Images/navlogo.svg";
 import axios from "axios";
-import { redirect } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import ConnectModal from "./ConnectModal";
+import DropdownMenu from "./DropdownMenu";
 
 export default function Navbar({
   connectWallet,
   logoutOfWeb3Modal,
   isConnected,
 }) {
-  const connectTwitter = async () => {
-    axios.get("https://givewithporuka.pythonanywhere.com/auth").then((res) => {
-      console.log(res);
-      window.open(res.data.url);
-    });
+  const [isLanding, setIsLanding] = useState(false);
+
+  useEffect(() => {
+    var url = window.location.pathname;
+    console.log(url);
+    if (url === "/") {
+      setIsLanding(true);
+    } else {
+      setIsLanding(false);
+    }
+  }, [window.location.pathname]);
+
+  const GoToApp = () => {
+    return (
+      <Link to="/connect">
+        <button
+          type="button"
+          className="inline-flex mt-10 items-center rounded-full border border-gray-600 px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+        >
+          Go to app
+        </button>
+      </Link>
+    );
+  };
+
+  const ConnectWallet = () => {
+    return (
+      <Link to="/connect">
+        <button
+          type="button"
+          className="inline-flex mt-10 items-center rounded-full border border-gray-600 px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+          onClick={() => {
+            connectWallet();
+          }}
+        >
+          Connect
+        </button>
+      </Link>
+    );
+  };
+
+  const Logout = () => {
+    return (
+      <Link to="/connect">
+        <button
+          type="button"
+          className="inline-flex mt-10 items-center rounded-full border border-gray-600 px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+          onClick={() => {
+            logoutOfWeb3Modal();
+          }}
+        >
+          Logout
+        </button>
+      </Link>
+    );
   };
 
   return (
@@ -22,35 +75,19 @@ export default function Navbar({
           aria-label="Top"
         >
           <div className="w-full py-4 flex items-center justify-between">
-            <div className="flex items-center text-black font-phosphate text-3xl">
-              <Logo height={50} width={50} />
-              <div className="ml-3 text-3xl">Poruka</div>
-            </div>
-            {isConnected ? (
-              <button
-                type="button"
-                className="inline-flex items-center rounded-full border border-gray-600 px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                onClick={() => logoutOfWeb3Modal()}
-              >
-                logout
-              </button>
+            <Link to="/">
+              <div className="flex items-center text-black font-phosphate text-3xl">
+                <Logo height={50} width={50} />
+                <div className="ml-3 text-3xl">Poruka</div>
+              </div>
+            </Link>
+
+            {isLanding ? (
+              <GoToApp />
+            ) : isConnected ? (
+              <Logout />
             ) : (
-              <>
-                <button
-                  type="button"
-                  className="inline-flex items-center rounded-full border border-gray-600 px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                  onClick={() => connectWallet()}
-                >
-                  Connect wallet
-                </button>
-                <button
-                  type="button"
-                  className="inline-flex items-center rounded-full border border-gray-600 px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                  onClick={() => connectTwitter()}
-                >
-                  Connect Twitter
-                </button>
-              </>
+              <ConnectWallet />
             )}
           </div>
         </nav>
