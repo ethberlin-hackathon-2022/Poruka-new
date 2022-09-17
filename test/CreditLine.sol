@@ -4,6 +4,7 @@ pragma solidity ^0.8.7;
 import "forge-std/Test.sol";
 import "../src/CreditLine.sol";
 import "../src/MockDai.sol";
+import "forge-std/console.sol";
 
 contract CreditLineTest is Test {
     CreditLine public CreditLineInstance;
@@ -185,6 +186,42 @@ contract CreditLineTest is Test {
             10_000 * 10% = 1000 over one year
         */
         assert((1000 - feeBalance ) <= 1);
+    }
+
+    function testShouldBePossibleToUpdateAGivenCreditLineWithHigherAmount() public {
+        Line memory line = Line({
+            amount: 0x42,
+            interestRate: 0
+        });
+        UserLine memory userLine = UserLine(line, TestBorrower);
+        UserLine[] memory userLines = new UserLine[](1);
+        userLines[0] = userLine;
+
+        vm.prank(TestLender);
+        CreditLineInstance.Create(userLines);
+
+        vm.prank(TestBorrower);
+        assert(CreditLineInstance.GetCreditLineAmount() == 0x42);
+
+        UpdateCreditLine[] memory updateLines = new UpdateCreditLine[](1);
+        updateLines[0].creditIndex = 0;
+        updateLines[0].amount = 0x82;
+        updateLines[0].user = TestBorrower;
+
+        vm.prank(TestBorrower);
+        console.log(CreditLineInstance.GetCreditLineAmount());
+
+        vm.prank(TestLender);
+        CreditLineInstance.Update(updateLines);
+
+        vm.prank(TestBorrower);
+        console.log(CreditLineInstance.GetCreditLineAmount());
+        vm.prank(TestBorrower);
+        assert(CreditLineInstance.GetCreditLineAmount() == 0x82);
+    }
+
+    function testShouldBePossibleToUpdateAGivenCreditLineWithLowerAmountIfNotAmountIsNotBorrowed() public {
+        // TODO: implement this function
     }
 
     function testShouldNotBePossibleToRepayMoreThanCreditAmount() public {

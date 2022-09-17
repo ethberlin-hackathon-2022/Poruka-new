@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.7;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "forge-std/console.sol";
 
 contract CreditLine {
     mapping(address => ActiveCreditLine[]) public UserCreditLines;
@@ -87,9 +88,18 @@ contract CreditLine {
         require(stableToken.transferFrom(msg.sender, address(this), sumAmount));
     }
 
-    function UpdateCreditLine() public {
+    function Update(UpdateCreditLine[] memory lines) external {
         // TODO: should be possible to update a credit line
         //       but should not be possible to edit the interst rate if there is an active borrow.
+        for (uint256 i = 0; i < lines.length; i++) {
+            UpdateCreditLine memory line = lines[i];
+
+            UserCreditLines[line.user][line.creditIndex].amount = line.amount;
+            UserCreditLines[line.user][line.creditIndex].balance += (line.amount - UserCreditLines[line.user][line.creditIndex].balance);
+            /*
+                TODO: Should not be possible to update the interest if borrowing is active.
+            */
+        }
     }
 
     function GetCreditLineAmount() external view returns (uint256) {
@@ -134,6 +144,12 @@ struct ActiveCreditLine {
 struct UserLine {
     Line creditLine;
     address user;
+}
+
+struct UpdateCreditLine {
+    address user;
+    uint256 creditIndex;
+    uint256 amount;
 }
 
 struct BorrowLine {
