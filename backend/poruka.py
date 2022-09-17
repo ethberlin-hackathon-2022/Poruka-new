@@ -14,6 +14,14 @@ oauth1_user_handler = tweepy.OAuth1UserHandler(
 
 @app.route("/auth", methods=["GET"])
 def twitterauth():
+    """
+    Start Twitter Authentication process.
+
+    Returns:
+    url (string): Twitter authorization url. Open so that user can confirm application.
+
+    """
+
     global oauth1_user_handler
     oauth1_user_handler = tweepy.OAuth1UserHandler(
         consumer_key=os.getenv("API_KEY"), consumer_secret=os.getenv("API_SEC"),
@@ -28,13 +36,19 @@ def twitterauth():
 
 
 @app.route("/callback")
-def test():
-    print(request.args)
+def callback():
+    """
+    Twitter callback handler.
+
+    Returns:
+    redirect: bring user back to index, now with Twitter account information
+
+    """
+
     global oauth1_user_handler
     access_token, access_token_secret = oauth1_user_handler.get_access_token(
         request.args['oauth_verifier']
     )
-    print(access_token, access_token_secret)
 
     client = tweepy.Client(
         consumer_key=os.getenv("API_KEY"),
@@ -49,14 +63,27 @@ def test():
     username = user.data.username
     params = {"id": id_, "username": username, "img": profile_image_url}
 
-    return redirect("https://poruka-new.vercel.app/?"+urllib.parse.urlencode(params))
+    return redirect("https://poruka-new.vercel.app/connect?"+urllib.parse.urlencode(params))
 
 
 @app.route("/v1/getTwitterIDs", methods=["GET"])
 def getTwitterIDs():
+    """
+    Translate Twitter usernames to Twitter IDs.
+
+    IDriss Twitter handles are translated to IDs so that a given
+    link does not disappear whenever someone changes the Twitter username.
+
+    Parameters:
+    names (string): comma-separated list of Twitter usernames. Max-length: 100 names.
+
+    Returns:
+    result (dict): Key-Value pairs of Twitter usernames and Twitter IDs.
+
+    """
     try:
         twitter_ids = clientT.get_users(usernames=",".join([x.strip("@") for x in request.args["names"].split(",")]), user_fields=["id"])
-        res_ids = {u.id: u.username for u in twitter_ids.data}
+        res_ids = {u.username: u.id for u in twitter_ids.data}
     except Exception as e:
         print(str(e))
         res_ids = "No ids found"
@@ -64,25 +91,60 @@ def getTwitterIDs():
     response.headers["Access-Control-Allow-Origin"] = "*"
     return response
 
-# library
-# _library
+
 @app.route("/v1/getTwitterNames", methods=["GET"])
 def getTwitterNames():
+    """
+    Translate Twitter IDs to Twitter usernames.
+
+    IDriss Twitter handles are translated to IDs so that a given
+    link does not disappear whenever someone changes the Twitter username.
+    Translation from IDs to usernames is needed after reverse resolving.
+
+    Parameters:
+    ids (string): comma-separated list of Twitter user IDs. Max-length: 100 IDs.
+
+    Returns:
+    result (dict): Key-Value pairs of Twitter IDs and Twitter usernames.
+
+    """
     try:
         twitter_names = clientT.get_users(ids=",".join([str(x) for x in request.args["ids"].split(",")]), user_fields=["username"])
-        res_names = {u.username: u.id for u in twitter_names.data}
+        res_names = {u.id: u.username for u in twitter_names.data}
     except Exception as e:
         print(str(e))
-        twitter_names = "No names found"
-    response = make_response({"result": twitter_names}, 200)
+        res_names = "No names found"
+    response = make_response({"result": res_names}, 200)
     response.headers["Access-Control-Allow-Origin"] = "*"
     return response
 
 
-@app.route('/getFollower', methods=["GET"])
+@app.route('/getFollowing', methods=["GET"])
 def get_follower():
+    """
+    Retrieve user information of people a given user is following.
+
+    Call after Twitter username of user is known
+    (sign-in with Twitter or IDriss reverse resolving) and
+    display a list of contacts.
+
+    Parameters:
+    id (string): Twitter user ID of given (verified) user.
+
+    Returns:
+    result (dict): Nested Key-Value pairs of Twitter usernames to Twitter IDs and profile picture source.
+    Example:
+        {
+            "givewithporuka": {
+                "id": "1570867755661889541",
+                "img": "https://pbs.twimg.com/profile_images/1570925543473684480/GF3RTo7W_bigger.jpg"
+            }
+        }
+
+    Warning: Rate limits 15 requests per 15 mins
+
+    """
     try:
-        # Warning: RateLimits 15 requests per 15 mins
         following = {}
         for response in tweepy.Paginator(clientT.get_users_following, request.args["id"], user_fields=["username", "id", "profile_image_url"], max_results=1000):
             if response.data:
