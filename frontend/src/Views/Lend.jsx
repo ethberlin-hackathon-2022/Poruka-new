@@ -93,7 +93,10 @@ export default function Lend({ allFollowers, setAllFollowers, twitterId }) {
                       <div className="flex">
                         <img
                           className="h-10 w-10 rounded-full"
-                          src={person.img}
+                          src={
+                            person.img ||
+                            "https://pbs.twimg.com/profile_images/378800000857919980/lHqPIZza_normal.png"
+                          }
                           alt=""
                         />
                         <div className="ml-3">
