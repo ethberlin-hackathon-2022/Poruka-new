@@ -24,7 +24,7 @@ export default function Lend({ allFollowers, setAllFollowers, twitterId }) {
   const handleAdd = (i, e) => {
     let newElement = [...listPeople];
     newElement[i][e.target.name] = e.target.value;
-    SetListPeople(newElement);
+    setListPeople(newElement);
   };
 
   const handlePrint = () => {
