@@ -10,22 +10,24 @@ export default function Lend({ allFollowers, setAllFollowers, twitterId }) {
 
   useEffect(() => {
     try {
-      const fetchAll = async () => {
-        const result = await fetchFollowers(twitterId);
-        console.log("result", result);
-        setAllFollowers(result);
-      };
-      fetchAll();
+      if (twitterId) {
+        const fetchAll = async () => {
+          const result = await fetchFollowers(twitterId);
+          console.log("result", result);
+          setAllFollowers(result);
+        };
+        fetchAll();
+      }
     } catch (error) {
       console.log(error);
     }
   }, [twitterId, setAllFollowers]);
 
-  const handleAdd = (i, e) => {
-    let newElement = [...listPeople];
-    newElement[i][e.target.name] = e.target.value;
-    setListPeople(newElement);
-  };
+  // const handleAdd = (i, e) => {
+  //   let newElement = [...listPeople];
+  //   newElement[i][e.target.name] = e.target.value;
+  //   setListPeople(newElement);
+  // };
 
   const handlePrint = () => {
     console.log("check");
