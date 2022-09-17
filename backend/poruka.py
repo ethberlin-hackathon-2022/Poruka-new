@@ -1,8 +1,7 @@
 import os
-import time
-from flask import Flask, make_response, request
+import urllib.parse
+from flask import Flask, make_response, request, redirect
 import tweepy
-import requests
 
 app = Flask(__name__)
 
@@ -10,11 +9,12 @@ clientT = tweepy.Client(os.getenv("TWITTER_BEARER"))
 
 oauth1_user_handler = tweepy.OAuth1UserHandler(
         consumer_key=os.getenv("API_KEY"), consumer_secret=os.getenv("API_SEC"),
-        callback="http://localhost:5000/callback"
+        callback="https://givewithporuka.pythonanywhere.com/callback"
     )
 
-@app.route("/auth")
+@app.route("/auth", methods=["GET"])
 def twitterauth():
+    global oauth1_user_handler
     oauth1_user_handler = tweepy.OAuth1UserHandler(
         consumer_key=os.getenv("API_KEY"), consumer_secret=os.getenv("API_SEC"),
         callback="http://localhost:5000/callback"
@@ -29,6 +29,8 @@ def twitterauth():
 
 @app.route("/callback")
 def test():
+    print(request.args)
+    global oauth1_user_handler
     access_token, access_token_secret = oauth1_user_handler.get_access_token(
         request.args['oauth_verifier']
     )
@@ -42,13 +44,12 @@ def test():
     )
 
     id_ = client._get_authenticating_user_id(oauth_1=True)
-    user = client.get_user(id=id_, user_fields=["username", "id", "profile_image_url"])
+    user = clientT.get_user(id=id_, user_fields=["username", "id", "profile_image_url"])
     profile_image_url = user.data.profile_image_url
     username = user.data.username
+    params = {"id": id_, "username": username, "img": profile_image_url}
 
-    response = make_response({"id": id_, "username": username, "img": profile_image_url}, 200)
-    response.headers["Access-Control-Allow-Origin"] = "*"
-    return response
+    return redirect("https://poruka-new.vercel.app/?"+urllib.parse.urlencode(params))
 
 
 @app.route("/v1/getTwitterIDs", methods=["GET"])
@@ -84,7 +85,8 @@ def get_follower():
         # Warning: RateLimits 15 requests per 15 mins
         following = {}
         for response in tweepy.Paginator(clientT.get_users_following, request.args["id"], user_fields=["username", "id", "profile_image_url"], max_results=1000):
-            following = {**following, **{u.username: {"id": u.id, "img": u.profile_image_url} for u in response.data}}
+            if response.data:
+                following = {**following, **{u.username: {"id": u.id, "img": u.profile_image_url} for u in response.data}}
         response = make_response({"result": following}, 200)
     except Exception as e:
         print(e)
