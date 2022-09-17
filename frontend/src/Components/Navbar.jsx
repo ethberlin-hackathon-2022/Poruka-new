@@ -1,29 +1,71 @@
 import { ReactComponent as Logo } from "../Images/navlogo.svg";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import ConnectModal from "./ConnectModal";
+import DropdownMenu from "./DropdownMenu";
 
 export default function Navbar({
   connectWallet,
   logoutOfWeb3Modal,
   isConnected,
 }) {
-  const connectTwitter = async () => {
-    axios.get("https://givewithporuka.pythonanywhere.com/auth").then((res) => {
-      console.log(res);
-      window.open(res.data.url);
-    });
-  };
+  const [isLanding, setIsLanding] = useState(false);
 
   useEffect(() => {
-    var url = new URL(window.location.href);
-    var id = url.searchParams.get("id");
-    var username = url.searchParams.get("username");
-    var img = url.searchParams.get("img");
-    console.log("id:", id);
-    console.log("username:", username);
-    console.log("img:", img);
-  }, []);
+    var url = window.location.pathname;
+    console.log(url);
+    if (url === "/") {
+      setIsLanding(true);
+    } else {
+      setIsLanding(false);
+    }
+  }, [window.location.pathname]);
+
+  const GoToApp = () => {
+    return (
+      <Link to="/connect">
+        <button
+          type="button"
+          className="inline-flex mt-10 items-center rounded-full border border-gray-600 px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+        >
+          Go to app
+        </button>
+      </Link>
+    );
+  };
+
+  const ConnectWallet = () => {
+    return (
+      <Link to="/connect">
+        <button
+          type="button"
+          className="inline-flex mt-10 items-center rounded-full border border-gray-600 px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+          onClick={() => {
+            connectWallet();
+          }}
+        >
+          Connect
+        </button>
+      </Link>
+    );
+  };
+
+  const Logout = () => {
+    return (
+      <Link to="/connect">
+        <button
+          type="button"
+          className="inline-flex mt-10 items-center rounded-full border border-gray-600 px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+          onClick={() => {
+            logoutOfWeb3Modal();
+          }}
+        >
+          Logout
+        </button>
+      </Link>
+    );
+  };
 
   return (
     <>
@@ -39,31 +81,13 @@ export default function Navbar({
                 <div className="ml-3 text-3xl">Poruka</div>
               </div>
             </Link>
-            {isConnected ? (
-              <button
-                type="button"
-                className="inline-flex items-center rounded-full border border-gray-600 px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                onClick={() => logoutOfWeb3Modal()}
-              >
-                logout
-              </button>
+
+            {isLanding ? (
+              <GoToApp />
+            ) : isConnected ? (
+              <Logout />
             ) : (
-              <>
-                <button
-                  type="button"
-                  className="inline-flex items-center rounded-full border border-gray-600 px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                  onClick={() => connectWallet()}
-                >
-                  Connect wallet
-                </button>
-                <button
-                  type="button"
-                  className="inline-flex items-center rounded-full border border-gray-600 px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                  onClick={() => connectTwitter()}
-                >
-                  Connect Twitter
-                </button>
-              </>
+              <ConnectWallet />
             )}
           </div>
         </nav>
