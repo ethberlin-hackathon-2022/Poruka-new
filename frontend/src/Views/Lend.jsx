@@ -6,20 +6,16 @@ import fetchFollowers from "../helpers/fetchFollowers";
 import { useEffect } from "react";
 
 export default function Lend({ allFollowers, setAllFollowers, twitterId }) {
-  const [listPeople, SetListPeople] = useState([]);
-
   useEffect(() => {
-    if (twitterId) {
-      try {
-        const fetchAll = async () => {
-          const result = await fetchFollowers(twitterId);
-          console.log("result", result);
-          setAllFollowers(result);
-        };
-        fetchAll();
-      } catch (error) {
-        console.log(error);
-      }
+    try {
+      const fetchAll = async () => {
+        const result = await fetchFollowers(twitterId);
+        console.log("result", result);
+        setAllFollowers(result);
+      };
+      fetchAll();
+    } catch (error) {
+      console.log(error);
     }
   }, [twitterId, setAllFollowers]);
 
@@ -27,6 +23,10 @@ export default function Lend({ allFollowers, setAllFollowers, twitterId }) {
     let newElement = [...listPeople];
     newElement[i][e.target.name] = e.target.value;
     SetListPeople(newElement);
+  };
+
+  const handlePrint = () => {
+    console.log(allFollowers);
   };
 
   const people = [
@@ -58,6 +58,12 @@ export default function Lend({ allFollowers, setAllFollowers, twitterId }) {
           <p className="text-xl font-light leading-10">
             Select from the list of people you follow on Twitter
           </p>
+          <button
+            className="inline-flex items-center rounded-md border border-transparent bg-blue-700 px-4 py-2 text-sm font-medium text-white"
+            onClick={handlePrint()}
+          >
+            Check
+          </button>
         </div>
         <div className="flex justify-center mt-5">
           <div className="overflow-hidden rounded-lg bg-white shadow mr-10 w-full">
@@ -90,20 +96,23 @@ export default function Lend({ allFollowers, setAllFollowers, twitterId }) {
               </div>
               <ul role="list" className="divide-y divide-gray-200">
                 {allFollowers?.map((person) => (
-                  <li key={person.id} className="flex py-4">
+                  <li key={person[0].id} className="flex py-4">
                     <div className="flex w-full justify-between">
                       <div className="flex">
                         <img
                           className="h-10 w-10 rounded-full"
-                          src={person.img}
+                          src={
+                            person[0].img ||
+                            "https://pbs.twimg.com/profile_images/378800000857919980/lHqPIZza_normal.png"
+                          }
                           alt=""
                         />
                         <div className="ml-3">
                           <p className="text-sm font-medium text-gray-900">
-                            {person.username || "oo"}
+                            {person[0].username || "oo"}
                           </p>
                           <p className="text-sm text-gray-500">
-                            {person.id || "ouou"}
+                            {person[0].id || "ouou"}
                           </p>
                         </div>
                       </div>
