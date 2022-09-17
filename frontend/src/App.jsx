@@ -92,9 +92,8 @@ function App() {
     console.log("result from IDriss:", await isTwitterResolved(address));
     const isTwitter = await isTwitterResolved(address);
     if (isTwitter !== "") {
-      setIsConnected(true);
+      setIsTwitterConnected(true);
     }
-
     setIsConnected(true);
     console.log("end");
   }
