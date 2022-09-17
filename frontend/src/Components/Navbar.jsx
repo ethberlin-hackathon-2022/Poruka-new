@@ -8,7 +8,7 @@ export default function Navbar({
   isConnected,
 }) {
   const connectTwitter = async () => {
-    axios.get("https://98f8-185-199-104-14.ngrok.io/auth").then((res) => {
+    axios.get("https://givewithporuka.pythonanywhere.com/auth").then((res) => {
       console.log(res);
       window.open(res.data.url);
     });
