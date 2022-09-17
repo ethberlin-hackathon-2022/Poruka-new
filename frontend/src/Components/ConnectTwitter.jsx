@@ -6,6 +6,7 @@ export default function ConnectTwitter({
   twitterId,
   allFollowers,
   setTwitterId,
+  setIsTwitterConnected,
 }) {
   const connectTwitter = async () => {
     axios.get("https://givewithporuka.pythonanywhere.com/auth").then((res) => {
@@ -20,6 +21,9 @@ export default function ConnectTwitter({
     var username = url.searchParams.get("username");
     var img = url.searchParams.get("img");
     setTwitterId(id);
+    if (id !== 0) {
+      setIsTwitterConnected(true);
+    }
     console.log("id:", id);
     console.log("username:", username);
     console.log("img:", img);
