@@ -2,10 +2,26 @@ import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
 import { ReactComponent as Plus } from "../Images/plus.svg";
 import { XMarkIcon } from "@heroicons/react/20/solid";
 import { useState } from "react";
-import NavbarConnected from "../Components/NavbarConnected";
+import fetchFollowers from "../helpers/fetchFollowers";
+import { useEffect } from "react";
 
-export default function Lend() {
+export default function Lend({ allFollowers, setAllFollowers, twitterId }) {
   const [listPeople, SetListPeople] = useState([]);
+
+  useEffect(() => {
+    if (twitterId) {
+      try {
+        const fetchAll = async () => {
+          const result = await fetchFollowers(twitterId);
+          console.log("result", result);
+          setAllFollowers(result);
+        };
+        fetchAll();
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }, [twitterId, setAllFollowers]);
 
   const handleAdd = (i, e) => {
     let newElement = [...listPeople];
@@ -73,21 +89,21 @@ export default function Lend() {
                 </div>
               </div>
               <ul role="list" className="divide-y divide-gray-200">
-                {people.map((person) => (
-                  <li key={person.email} className="flex py-4">
+                {allFollowers?.map((person) => (
+                  <li key={person.id} className="flex py-4">
                     <div className="flex w-full justify-between">
                       <div className="flex">
                         <img
                           className="h-10 w-10 rounded-full"
-                          src={person.image}
+                          src={person.img}
                           alt=""
                         />
                         <div className="ml-3">
                           <p className="text-sm font-medium text-gray-900">
-                            {person.name}
+                            {person.username || "oo"}
                           </p>
                           <p className="text-sm text-gray-500">
-                            {person.email}
+                            {person.id || "ouou"}
                           </p>
                         </div>
                       </div>

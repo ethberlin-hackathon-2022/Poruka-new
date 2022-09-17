@@ -11,20 +11,8 @@ export default function Connect({
   setIsTwitterConnected,
   twitterId,
   setTwitterId,
+  setAllFollowers,
 }) {
-  const [allFollowers, setAllFollowers] = useState([]);
-
-  useEffect(() => {
-    if (twitterId !== 0) {
-      const fetchAll = async () => {
-        const result = await fetchFollowers(twitterId);
-        console.log("result", result);
-        return result;
-      };
-      fetchAll();
-    }
-  }, [twitterId]);
-
   return (
     <>
       {isConnected ? (
@@ -33,7 +21,6 @@ export default function Connect({
         ) : (
           <ConnectTwitter
             twitterId={twitterId}
-            allFollowers={allFollowers}
             setTwitterId={setTwitterId}
             isTwitterConnected={isTwitterConnected}
             setIsTwitterConnected={setIsTwitterConnected}
