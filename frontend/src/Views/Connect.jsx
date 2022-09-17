@@ -34,6 +34,7 @@ export default function Connect({
             twitterId={twitterId}
             allFollowers={allFollowers}
             setTwitterId={setTwitterId}
+            isTwitterConnected={isTwitterConnected}
           />
         )
       ) : (
