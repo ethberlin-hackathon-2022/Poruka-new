@@ -132,7 +132,11 @@ contract CreditLine {
         for (uint256 i = 0; i < lenderAmount.length; i++) {
             if (lenderAmount[i].amount != 0) {
                 require(
-                    stableToken.transferFrom(msg.sender, lenderAmount[i].lender, lenderAmount[i].amount)
+                    stableToken.transferFrom(
+                        msg.sender,
+                        lenderAmount[i].lender,
+                        lenderAmount[i].amount
+                    )
                 );
             }
         }
@@ -163,15 +167,27 @@ contract CreditLine {
         }
     }
 
-    function GetCreditLineAmount() external view returns (uint256) {
+    function GetUsercreditLineAmount(address user)
+        external
+        view
+        returns (uint256)
+    {
         uint256 amount = 0;
-        for (uint256 i = 0; i < UserCreditLines[msg.sender].length; i++) {
-            amount = UserCreditLines[msg.sender][i].balance;
+        for (uint256 i = 0; i < UserCreditLines[user].length; i++) {
+            amount = UserCreditLines[user][i].balance;
         }
         return amount;
     }
 
-    function GetOutstandingAmount() external view returns (uint256) {
+    function GetCreditLineAmount() external view returns (uint256) {
+        return this.GetUsercreditLineAmount(msg.sender);
+    }
+
+    function GetUserOutstandingAmount(address user)
+        external
+        view
+        returns (uint256)
+    {
         /**
             TODO:
                 The outstadning amount should do an interest calculation on the fly.
@@ -179,13 +195,17 @@ contract CreditLine {
                 allow a user to repay it all at once, or just the principal.
         */
         uint256 amount = 0;
-        for (uint256 i = 0; i < UserCreditLines[msg.sender].length; i++) {
-            uint256 borrowed = UserCreditLines[msg.sender][i].amount -
-                UserCreditLines[msg.sender][i].balance;
-            uint256 fee = UserCreditLines[msg.sender][i].accumulatedInterest;
+        for (uint256 i = 0; i < UserCreditLines[user].length; i++) {
+            uint256 borrowed = UserCreditLines[user][i].amount -
+                UserCreditLines[user][i].balance;
+            uint256 fee = UserCreditLines[user][i].accumulatedInterest;
             amount = borrowed + fee;
         }
         return amount;
+    }
+
+    function GetOutstandingAmount() external view returns (uint256) {
+        return this.GetUserOutstandingAmount(msg.sender);
     }
 }
 
