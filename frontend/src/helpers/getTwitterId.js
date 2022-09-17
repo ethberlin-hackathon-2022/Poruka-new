@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export default async function getTwitterId(handle) {
-  axios
+  return axios
     .get(
       "https://givewithporuka.pythonanywhere.com/v1/getTwitterIDs?names=" +
         handle
