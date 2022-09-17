@@ -10,6 +10,7 @@ export default function Connect({
   isTwitterConnected,
   twitterId,
   setTwitterId,
+  setIsTwitterConnected,
 }) {
   const [allFollowers, setAllFollowers] = useState([]);
 
@@ -34,6 +35,8 @@ export default function Connect({
             twitterId={twitterId}
             allFollowers={allFollowers}
             setTwitterId={setTwitterId}
+            isTwitterConnected={isTwitterConnected}
+            setIsTwitterConnected={setIsTwitterConnected}
           />
         )
       ) : (

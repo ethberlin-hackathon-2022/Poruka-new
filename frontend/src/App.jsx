@@ -141,6 +141,7 @@ function App() {
               isTwitterConnected={isTwitterConnected}
               twitterId={twitterId}
               setTwitterId={setTwitterId}
+              setIsTwitterConnected={setIsTwitterConnected}
             />
           }
         />
