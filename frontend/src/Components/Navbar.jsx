@@ -1,6 +1,7 @@
 import { ReactComponent as Logo } from "../Images/navlogo.svg";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { useEffect } from "react";
 
 export default function Navbar({
   connectWallet,
@@ -13,6 +14,18 @@ export default function Navbar({
       window.open(res.data.url);
     });
   };
+
+  useEffect(() => {
+    if (window.location.href) {
+      var url = new URL(window.location.href);
+      var id = url.searchParams.get("id");
+      var username = url.searchParams.get("username");
+      var img = url.searchParams.get("img");
+      console.log("id:", id);
+      console.log("username:", username);
+      console.log("img:", img);
+    }
+  }, []);
 
   return (
     <>
