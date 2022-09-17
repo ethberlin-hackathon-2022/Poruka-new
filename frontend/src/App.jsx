@@ -11,6 +11,7 @@ import Lend from "./Views/Lend";
 import Connect from "./Views/Connect";
 import Navbar from "./Components/Navbar";
 import isTwitterResolved from "./helpers/isTwitterResolved";
+import getTwitterId from "./helpers/getTwitterId";
 
 const INFURA_ID = "f17f31ea210e43ca91b886804c49a9b8";
 
@@ -92,9 +93,11 @@ function App() {
     console.log(address);
     console.log("result from IDriss:", await isTwitterResolved(address));
     const isTwitter = await isTwitterResolved(address);
+    console.log("Is Twitter ???==", isTwitter);
     if (isTwitter !== "") {
       setIsTwitterConnected(true);
-      const id = isTwitter.id;
+      const handle = isTwitter;
+      const id = getTwitterId(handle);
       setTwitterId(id);
     }
     setIsConnected(true);
@@ -139,9 +142,9 @@ function App() {
               connectWallet={connectWallet}
               isConnected={isConnected}
               isTwitterConnected={isTwitterConnected}
+              setIsTwitterConnected={setIsTwitterConnected}
               twitterId={twitterId}
               setTwitterId={setTwitterId}
-              setIsTwitterConnected={setIsTwitterConnected}
             />
           }
         />

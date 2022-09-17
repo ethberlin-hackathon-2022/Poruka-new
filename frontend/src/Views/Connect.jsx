@@ -8,9 +8,9 @@ export default function Connect({
   connectWallet,
   isConnected,
   isTwitterConnected,
+  setIsTwitterConnected,
   twitterId,
   setTwitterId,
-  setIsTwitterConnected,
 }) {
   const [allFollowers, setAllFollowers] = useState([]);
 

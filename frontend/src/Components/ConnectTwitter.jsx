@@ -20,17 +20,18 @@ export default function ConnectTwitter({
     var id = url.searchParams.get("id");
     var username = url.searchParams.get("username");
     var img = url.searchParams.get("img");
-    setTwitterId(id);
-    if (id !== 0) {
+    console.log("the id im receiving to set", id);
+    if (id === null) {
+      return;
+    } else {
       setIsTwitterConnected(true);
+      setTwitterId(id);
     }
-    console.log("id:", id);
-    console.log("username:", username);
-    console.log("img:", img);
     window.localStorage.setItem("twitter_id", id);
     window.localStorage.setItem("twitter_name", username);
     window.localStorage.setItem("twitter_photo", img);
   }, []);
+
   return (
     <div className="flex mx-20 mt-20">
       <button
