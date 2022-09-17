@@ -1,9 +1,6 @@
 import { ReactComponent as Logo } from "../Images/navlogo.svg";
-import axios from "axios";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import ConnectModal from "./ConnectModal";
-import DropdownMenu from "./DropdownMenu";
 
 export default function Navbar({
   connectWallet,
