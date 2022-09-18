@@ -14,10 +14,10 @@ export default function Lend({ allFollowers, setAllFollowers, twitterId }) {
       if (twitterId) {
         const fetchAll = async () => {
           const result = await fetchFollowers(twitterId);
-          console.log("result", result);
-          setAllFollowers(result.slice(0, 10));
+          return result;
         };
-        fetchAll();
+        const res = fetchAll();
+        setAllFollowers(res);
       }
     } catch (error) {
       console.log(error);
