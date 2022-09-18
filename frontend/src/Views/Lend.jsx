@@ -33,6 +33,12 @@ export default function Lend({ allFollowers, setAllFollowers, twitterId }) {
     setListPeople([...listPeople, person]);
   };
 
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const inputs = [...listPeople];
+    console.log("Owners of the multisig =>", inputs);
+  };
+
   return (
     <>
       <div className="mx-20 mt-20">
@@ -48,6 +54,13 @@ export default function Lend({ allFollowers, setAllFollowers, twitterId }) {
               <p className="font-normal leading-10 text-3xl">
                 People you follow on Twitter
               </p>
+              <button
+                onClick={(e) => {
+                  handleSubmit(e);
+                }}
+              >
+                CHECK
+              </button>
               <div className="mt-5">
                 <label htmlFor="search" className="sr-only">
                   Search
