@@ -198,32 +198,34 @@ export default function Lend({ allFollowers, setAllFollowers, twitterId }) {
                                   <td className="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
                                     <div>
                                       <select
-                                        id="location"
-                                        name="location"
+                                        id="amount"
+                                        name="amount"
                                         className="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                                         onChange={(e) => {
                                           handleChange(index, e);
                                         }}
+                                        defaultValue="100"
                                       >
-                                        <option>100$</option>
-                                        <option>200$</option>
-                                        <option>300$</option>
+                                        <option>100</option>
+                                        <option>200</option>
+                                        <option>300</option>
                                       </select>
                                     </div>
                                   </td>
                                   <td className="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
                                     <div>
                                       <select
-                                        id="location"
-                                        name="location"
+                                        id="interest"
+                                        name="interest"
                                         className="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                                         onChange={(e) => {
                                           handleChange(index, e);
                                         }}
+                                        defaultValue="0"
                                       >
-                                        <option>0%</option>
-                                        <option>0.5%</option>
-                                        <option>1%</option>
+                                        <option>0</option>
+                                        <option>0.5</option>
+                                        <option>1</option>
                                       </select>
                                     </div>
                                   </td>
