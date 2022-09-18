@@ -1395,7 +1395,8 @@ def callback():
     Twitter callback handler.
 
     Returns:
-    redirect: bring user back to index, now with Twitter account information
+    redirect: bring user back to index, now with Twitter account information.
+    Only called if no reverse IDriss found.
 
     """
 
@@ -1432,7 +1433,7 @@ def getTwitterIDs():
     link does not disappear whenever someone changes the Twitter username.
 
     Parameters:
-    names (string): comma-separated list of Twitter usernames. Max-length: 100 names.
+    names (string): comma-separated list of Twitter usernames (no whitespaces). Max-length: 100 names.
 
     Returns:
     result (dict): Key-Value pairs of Twitter usernames and Twitter IDs.
@@ -1462,7 +1463,7 @@ def getTwitterNames():
     Translation from IDs to usernames is needed after reverse resolving.
 
     Parameters:
-    ids (string): comma-separated list of Twitter user IDs. Max-length: 100 IDs.
+    ids (string): comma-separated list of Twitter user IDs (no whitespaces). Max-length: 100 IDs.
 
     Returns:
     result (dict): Key-Value pairs of Twitter IDs and Twitter usernames.

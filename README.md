@@ -1,70 +1,72 @@
-# Getting Started with Create React App
+# Poruka - Networked finance for social alliance.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+### EthBerlin Hackathon 2022 
 
-## Available Scripts
+## Project Description
+Poruka is a credit coordination layer that enables users to set 
+their own interest terms, and reshapes interest into a positive-sum 
+mechanism for community savings. Poruka fetches your real-life 
+address book to connect you with people you would want to open a 
+lending relationship with. Lenders decide if they will charge interest 
+to the borrower, and if so, half the interest goes to the lender, and 
+half to a community savings account.  
 
-In the project directory, you can run:
+## How it works
+1. Sign in with your wallet:
+   If previously connected with IDriss, people you are already connected with will appear on a list. Select the people you want to add as a contact. Otherwise, you can add contacts by inputting their wallet addresses.
 
-### `npm start`
+Lender:
+2. Select people:
+   Select the people you want to extend a line of credit to, input the amount you are providing, and if desired, choose what interest rate you would like to lend at. 
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Borrower:
+2. Select offers:
+   Select which credit lines you would like to withdraw from and input the amount you want to withdraw. 
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+3. Reimburse your line:
+   If expected, pay back your provider by inputting the amount field.  
 
-### `npm test`
+## What's next for Poruka ? 
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Challenges
 
-### `npm run build`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Tech we used
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+* React frontend
+* Flask backend
+* Figma for mockups
+* IDriss [ts-library](https://github.com/idriss-crypto/ts-library) as a mapping of Twitter names and wallet addresses
+* Twitter API for user authentication and to fetch followers
+* IDriss Send to send credit line vouchers (NFTs) to Twitter accounts that do not have a wallet yet
+* Smart Contracts deployed on Goerli
+  * [Credit line contract](https://goerli.etherscan.io/address/0xda6a763ea19bee1acc1a6e64229cfd9da58cb807)
+  * [NFT voucher contract](https://goerli.etherscan.io/address/0x97F282901dfA50E7d2c148C3fDb56F47B0282097)
+  
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Team members :
 
-### `npm run eject`
+Lennard [@levertz_](https://twitter.com/levertz_) 
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Lauren [@hexxy0x](https://twitter.com/hexxy0x)
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Andrew [@ndreij](https://twitter.com/ndreij)
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+Yanis [@yanis_mezn](https://twitter.com/yanis_mezn)
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+Brage [@2xic_](https://twitter.com/2xic_)
 
-## Learn More
+## Contact Information :
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Mail: poruka.eth@gmail.com 
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Twitter: [@GiveWithPoruka](https://twitter.com/givewithporuka)
 
-### Code Splitting
+## Video Link : 
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+[Demo Video](https://www.youtube.com/watch?v=6fAFNpbibFo) 
+[Presentation](https://pitch.com/public/0b55f021-919f-42b4-a52b-408bfd5b33cb/de8ac92e-19a6-4926-a3a5-b874455166be)
 
-### Analyzing the Bundle Size
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
 
-### Making a Progressive Web App
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)

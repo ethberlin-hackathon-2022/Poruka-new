@@ -12,10 +12,9 @@ export default function Landing({
       <div className="flex mx-20 mt-20 justify-between">
         <div className="flex items-center">
           <div className="">
-            <p className="font-extrabold text-7xl">Lend to fam</p>
+            <p className="font-extrabold text-7xl">In our shared interest</p>
             <p className="w-3/4 text-3xl mt-10 font-light leading-10">
-              Give and get access to financial support by vouching for people
-              you know
+              Leverage your support network to lend, borrow, and earn together.
             </p>
             <Link to="/connect">
               <button
