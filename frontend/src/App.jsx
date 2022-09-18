@@ -25,7 +25,7 @@ function App() {
   const [isTwitterConnected, setIsTwitterConnected] = useState(false);
   const [twitterId, setTwitterId] = useState(0);
   const navigate = useNavigate();
-  const [allFollowers, setAllFollowers] = useState(null);
+  const [allFollowers, setAllFollowers] = useState([]);
 
   const addListeners = (provider) => {
     provider.on("chainChanged", (chainId) => {

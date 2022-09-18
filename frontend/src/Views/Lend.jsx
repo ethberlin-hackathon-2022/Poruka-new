@@ -17,7 +17,7 @@ export default function Lend({ allFollowers, setAllFollowers, twitterId }) {
           return result;
         };
         const res = fetchAll();
-        setAllFollowers(res);
+        setAllFollowers([...res]);
       }
     } catch (error) {
       console.log(error);
