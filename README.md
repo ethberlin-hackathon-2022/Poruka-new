@@ -3,7 +3,7 @@
 ### EthBerlin Hackathon 2022 
 
 ### [Open App](https://poruka-new.vercel.app/)
-### [Devfolio]()
+### [Devfolio](https://devfolio.co/projects/poruka-c568)
 
 <img src="/assets/landing.png" alt="Employee data" title="Employee Data title">
 
