@@ -33,32 +33,6 @@ export default function Lend({ allFollowers, setAllFollowers, twitterId }) {
     setListPeople([...listPeople, person]);
   };
 
-  const handlePrint = () => {
-    console.log("check");
-    console.log(allFollowers);
-  };
-
-  const people = [
-    {
-      name: "Calvin Hawkins",
-      email: "calvin.hawkins@example.com",
-      image:
-        "https://pbs.twimg.com/profile_images/378800000857919980/lHqPIZza_normal.png",
-    },
-    {
-      name: "Kristen Ramos",
-      email: "kristen.ramos@example.com",
-      image:
-        "https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-    },
-    {
-      name: "Ted Fox",
-      email: "ted.fox@example.com",
-      image:
-        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-    },
-  ];
-
   return (
     <>
       <div className="mx-20 mt-20">
@@ -67,12 +41,6 @@ export default function Lend({ allFollowers, setAllFollowers, twitterId }) {
           <p className="text-xl font-light leading-10">
             Select from the list of people you follow on Twitter
           </p>
-          <button
-            className="inline-flex items-center rounded-md border border-transparent bg-blue-700 px-4 py-2 text-sm font-medium text-white"
-            onClick={() => handlePrint()}
-          >
-            Check
-          </button>
         </div>
         <div className="flex justify-center mt-5">
           <div className="overflow-hidden rounded-lg bg-white shadow mr-10 w-full">
@@ -193,7 +161,7 @@ export default function Lend({ allFollowers, setAllFollowers, twitterId }) {
                               </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200">
-                              {listPeople?.map((person) => (
+                              {listPeople?.map((person, index) => (
                                 <tr key={person.id}>
                                   <li key={person.id} className="flex py-4">
                                     <div className="flex w-full justify-between">
@@ -220,7 +188,9 @@ export default function Lend({ allFollowers, setAllFollowers, twitterId }) {
                                         id="location"
                                         name="location"
                                         className="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-                                        defaultValue="Canada"
+                                        onChange={(e) => {
+                                          handleChange(index, e);
+                                        }}
                                       >
                                         <option>100$</option>
                                         <option>200$</option>
@@ -234,7 +204,9 @@ export default function Lend({ allFollowers, setAllFollowers, twitterId }) {
                                         id="location"
                                         name="location"
                                         className="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-                                        defaultValue="Canada"
+                                        onChange={(e) => {
+                                          handleChange(index, e);
+                                        }}
                                       >
                                         <option>0%</option>
                                         <option>0.5%</option>
