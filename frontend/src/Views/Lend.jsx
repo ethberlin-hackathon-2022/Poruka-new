@@ -100,7 +100,7 @@ export default function Lend({ allFollowers, setAllFollowers, twitterId }) {
                 </div>
               </div>
               <ul role="list" className="divide-y divide-gray-200">
-                {allFollowers?.map((index, person) => (
+                {allFollowers?.map((person, index) => (
                   <li key={person.id} className="flex py-4">
                     <div className="flex w-full justify-between">
                       <div className="flex">
