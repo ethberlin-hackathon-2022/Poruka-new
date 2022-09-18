@@ -41,8 +41,13 @@ contract CreditLine {
             });
             UserCreditLines[line.user].push(activeLine);
         }
+        
+        string memory zeroAllowanceMessage = "Zero allowance to ";
+        string memory addressStr = Strings.toHexString((address(this)));
 
-        require(stableToken.transferFrom(msg.sender, address(this), sumAmount));
+        require(0 < stableToken.balanceOf(msg.sender), string.concat("Zero balance ", Strings.toHexString(uint160(address(msg.sender)), 20), " of ", Strings.toHexString(uint160(address(stableToken)), 20)));
+        require(0 < stableToken.allowance(msg.sender, address(this)), string.concat(zeroAllowanceMessage, addressStr));
+        require(stableToken.transferFrom(msg.sender, address(this), sumAmount), "Failed transfer");
     }
 
     function Borrow(BorrowLine[] calldata lines) external {
