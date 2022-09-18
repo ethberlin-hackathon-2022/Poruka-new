@@ -76,7 +76,6 @@ function App() {
   }, []);
 
   async function connectWallet() {
-    console.log("start");
     const web3provider = await web3Modal.connect();
 
     addListeners(web3provider);
@@ -99,7 +98,6 @@ function App() {
       setTwitterId(id);
     }
     setIsConnected(true);
-    console.log("end");
   }
 
   const logoutOfWeb3Modal = async () => {

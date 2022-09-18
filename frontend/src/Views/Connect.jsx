@@ -12,12 +12,17 @@ export default function Connect({
   twitterId,
   setTwitterId,
   setAllFollowers,
+  allFollowers,
 }) {
   return (
     <>
       {isConnected ? (
         isTwitterConnected ? (
-          <Lend />
+          <Lend
+            allFollowers={allFollowers}
+            setAllFollowers={setAllFollowers}
+            twitterId={twitterId}
+          />
         ) : (
           <ConnectTwitter
             twitterId={twitterId}
