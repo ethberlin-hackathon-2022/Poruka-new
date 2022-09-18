@@ -25,12 +25,13 @@ export default function ConnectTwitter({
       return;
     } else {
       setIsTwitterConnected(true);
+      console.log("the id that we use to set state", id);
       setTwitterId(id);
     }
     window.localStorage.setItem("twitter_id", id);
     window.localStorage.setItem("twitter_name", username);
     window.localStorage.setItem("twitter_photo", img);
-  }, []);
+  }, [setIsTwitterConnected, setTwitterId]);
 
   return (
     <div className="flex mx-20 mt-20">

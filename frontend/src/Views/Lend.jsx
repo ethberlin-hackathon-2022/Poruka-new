@@ -10,48 +10,34 @@ export default function Lend({ allFollowers, setAllFollowers, twitterId }) {
 
   useEffect(() => {
     try {
-      const fetchAll = async () => {
-        const result = await fetchFollowers(twitterId);
-        console.log("result", result);
-        setAllFollowers(result);
-      };
-      fetchAll();
+      console.log("twitter id", twitterId);
+      if (twitterId) {
+        const fetchAll = async () => {
+          const result = await fetchFollowers(twitterId);
+          setAllFollowers([...result]);
+        };
+        fetchAll();
+      }
     } catch (error) {
       console.log(error);
     }
   }, [twitterId, setAllFollowers]);
 
-  const handleAdd = (i, e) => {
+  const handleChange = (i, e) => {
     let newElement = [...listPeople];
     newElement[i][e.target.name] = e.target.value;
     setListPeople(newElement);
   };
 
-  const handlePrint = () => {
-    console.log("check");
-    console.log(allFollowers);
+  let handleAdd = (person) => {
+    setListPeople([...listPeople, person]);
   };
 
-  const people = [
-    {
-      name: "Calvin Hawkins",
-      email: "calvin.hawkins@example.com",
-      image:
-        "https://pbs.twimg.com/profile_images/378800000857919980/lHqPIZza_normal.png",
-    },
-    {
-      name: "Kristen Ramos",
-      email: "kristen.ramos@example.com",
-      image:
-        "https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-    },
-    {
-      name: "Ted Fox",
-      email: "ted.fox@example.com",
-      image:
-        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-    },
-  ];
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const inputs = [...listPeople];
+    console.log("Owners of the multisig =>", inputs);
+  };
 
   return (
     <>
@@ -61,12 +47,6 @@ export default function Lend({ allFollowers, setAllFollowers, twitterId }) {
           <p className="text-xl font-light leading-10">
             Select from the list of people you follow on Twitter
           </p>
-          <button
-            className="inline-flex items-center rounded-md border border-transparent bg-blue-700 px-4 py-2 text-sm font-medium text-white"
-            onClick={() => handlePrint()}
-          >
-            Check
-          </button>
         </div>
         <div className="flex justify-center mt-5">
           <div className="overflow-hidden rounded-lg bg-white shadow mr-10 w-full">
@@ -74,6 +54,13 @@ export default function Lend({ allFollowers, setAllFollowers, twitterId }) {
               <p className="font-normal leading-10 text-3xl">
                 People you follow on Twitter
               </p>
+              <button
+                onClick={(e) => {
+                  handleSubmit(e);
+                }}
+              >
+                CHECK
+              </button>
               <div className="mt-5">
                 <label htmlFor="search" className="sr-only">
                   Search
@@ -98,30 +85,31 @@ export default function Lend({ allFollowers, setAllFollowers, twitterId }) {
                 </div>
               </div>
               <ul role="list" className="divide-y divide-gray-200">
-                {allFollowers?.map((person) => (
-                  <li key={person[0].id} className="flex py-4">
+                {allFollowers?.map((person, index) => (
+                  <li key={person.id} className="flex py-4">
                     <div className="flex w-full justify-between">
                       <div className="flex">
                         <img
                           className="h-10 w-10 rounded-full"
                           src={
-                            person[0].img ||
+                            person.img ||
                             "https://pbs.twimg.com/profile_images/378800000857919980/lHqPIZza_normal.png"
                           }
                           alt=""
                         />
                         <div className="ml-3">
                           <p className="text-sm font-medium text-gray-900">
-                            {person[0].username || "oo"}
+                            {person.username || "oo"}
                           </p>
                           <p className="text-sm text-gray-500">
-                            {person[0].id || "ouou"}
+                            {person.id || "ouou"}
                           </p>
                         </div>
                       </div>
                       <button
                         type="button"
                         className="inline-flex items-center rounded border border-gray-300 bg-white px-2.5 py-1.5 text-xs font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        onClick={() => handleAdd(person)}
                       >
                         Add
                       </button>
@@ -147,7 +135,7 @@ export default function Lend({ allFollowers, setAllFollowers, twitterId }) {
                   </span>
                 )}
               </div>
-              {people.length === 0 ? (
+              {listPeople.length === 0 ? (
                 <>
                   <div className="flex items-center justify-center mt-20">
                     <div className="grid place-items-center">
@@ -186,22 +174,22 @@ export default function Lend({ allFollowers, setAllFollowers, twitterId }) {
                               </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200">
-                              {people.map((person) => (
-                                <tr key={person.email}>
-                                  <li key={person.email} className="flex py-4">
+                              {listPeople?.map((person, index) => (
+                                <tr key={person.id}>
+                                  <li key={person.id} className="flex py-4">
                                     <div className="flex w-full justify-between">
                                       <div className="flex">
                                         <img
                                           className="h-10 w-10 rounded-full"
-                                          src={person.image}
+                                          src={person.img}
                                           alt=""
                                         />
                                         <div className="ml-3">
                                           <p className="text-sm font-medium text-gray-900">
-                                            {person.name}
+                                            {person.username}
                                           </p>
                                           <p className="text-sm text-gray-500">
-                                            {person.email}
+                                            {person.id}
                                           </p>
                                         </div>
                                       </div>
@@ -213,7 +201,9 @@ export default function Lend({ allFollowers, setAllFollowers, twitterId }) {
                                         id="location"
                                         name="location"
                                         className="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-                                        defaultValue="Canada"
+                                        onChange={(e) => {
+                                          handleChange(index, e);
+                                        }}
                                       >
                                         <option>100$</option>
                                         <option>200$</option>
@@ -227,7 +217,9 @@ export default function Lend({ allFollowers, setAllFollowers, twitterId }) {
                                         id="location"
                                         name="location"
                                         className="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-                                        defaultValue="Canada"
+                                        onChange={(e) => {
+                                          handleChange(index, e);
+                                        }}
                                       >
                                         <option>0%</option>
                                         <option>0.5%</option>

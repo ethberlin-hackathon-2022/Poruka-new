@@ -25,7 +25,7 @@ function App() {
   const [isTwitterConnected, setIsTwitterConnected] = useState(false);
   const [twitterId, setTwitterId] = useState(0);
   const navigate = useNavigate();
-  const [allFollowers, setAllFollowers] = useState(null);
+  const [allFollowers, setAllFollowers] = useState([]);
 
   const addListeners = (provider) => {
     provider.on("chainChanged", (chainId) => {
@@ -76,7 +76,6 @@ function App() {
   }, []);
 
   async function connectWallet() {
-    console.log("start");
     const web3provider = await web3Modal.connect();
 
     addListeners(web3provider);
@@ -99,7 +98,6 @@ function App() {
       setTwitterId(id);
     }
     setIsConnected(true);
-    console.log("end");
   }
 
   const logoutOfWeb3Modal = async () => {
