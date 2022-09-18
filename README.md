@@ -2,6 +2,12 @@
 
 ### EthBerlin Hackathon 2022 
 
+### [Open App](https://poruka-new.vercel.app/)
+### [Devfolio]()
+
+<img src="/assets/landing.png" alt="Employee data" title="Employee Data title">
+
+
 ## Project Description
 Poruka is a credit coordination layer that enables users to set 
 their own interest terms, and reshapes interest into a positive-sum 
@@ -25,10 +31,6 @@ Borrower:
 
 3. Reimburse your line:
    If expected, pay back your provider by inputting the amount field.  
-
-## What's next for Poruka ? 
-
-## Challenges
 
 
 ## Tech we used
@@ -65,7 +67,7 @@ Twitter: [@GiveWithPoruka](https://twitter.com/givewithporuka)
 ## Video Link : 
 
 [Demo Video](https://www.youtube.com/watch?v=6fAFNpbibFo) 
-[Presentation](https://pitch.com/public/0b55f021-919f-42b4-a52b-408bfd5b33cb/de8ac92e-19a6-4926-a3a5-b874455166be)
+[Presentation]()
 
 
 
