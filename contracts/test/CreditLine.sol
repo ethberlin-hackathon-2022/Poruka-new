@@ -4,18 +4,25 @@ pragma solidity ^0.8.7;
 import "forge-std/Test.sol";
 import "../src/CreditLine.sol";
 import "../src/MockDai.sol";
+import "../src/Treasury.sol";
+import "../src/NftVoucher.sol";
 import "forge-std/console.sol";
 
 contract CreditLineTest is Test {
     CreditLine public CreditLineInstance;
     MockDai public MockDaiInstance;
+    Treasury public TressuaryInstance;
+    NftVoucher public NftVoucherInstance;
 
     address public TestBorrower = address(0x41414141);
     address public TestLender = address(0x42424242);
+    address public TressuaryOwner = address(0x43434343);
 
     function setUp() public {
         MockDaiInstance = new MockDai();
-        CreditLineInstance = new CreditLine(MockDaiInstance);
+        TressuaryInstance = new Treasury(TressuaryOwner);
+        NftVoucherInstance = new NftVoucher(MockDaiInstance);
+        CreditLineInstance = new CreditLine(MockDaiInstance, NftVoucherInstance, address(TressuaryInstance));
 
         MockDaiInstance.mint(TestLender, 100_000);
         vm.prank(TestLender);
@@ -291,6 +298,14 @@ contract CreditLineTest is Test {
         // TODO: implement this function
     }
 
+    function testShouldMintAnNftToBorrowerWhenCreditLineIsPaidBack() public {
+        // TODO: implement this function
+    }
+
+    function testShouldBePossibleForLenderToWithdrawTheMoneyIfNotBeingBorrowed() public {
+        // TODO: implement this function
+    }
+
     function testShouldPutInterestIntoTressuary() public {
         // 2022-01-01 22:00:00 GMT+0100
         vm.warp(1641070800);
@@ -350,12 +365,32 @@ contract CreditLineTest is Test {
         repaymentInterestLines[0] = repaymentInterestLine;
 
         vm.prank(TestBorrower);
+
+        MockDaiInstance.increaseAllowance(address(CreditLineInstance), 100_000);
+        MockDaiInstance.mint(TestBorrower, 2_000);
+
+        vm.prank(TestBorrower);
         CreditLineInstance.Repayment(repaymentInterestLines);
         uint256 updatedInterestBalance = CreditLineInstance.GetOutstandingAmount();
         assert(updatedInterestBalance == 0);
+
+        assert(499 <= MockDaiInstance.balanceOf(address(TressuaryInstance)));
+        assert(499 <= MockDaiInstance.balanceOf(address(TestLender)));
     }
 
     function testShouldBePossibleToUseNftVoucherForOnBoarding() public {
-        // TODO: implement this function
+        vm.prank(TestLender);
+        MockDaiInstance.approve(address(NftVoucherInstance), 100_000);
+
+        vm.prank(TestLender);
+        uint256 voucherId = NftVoucherInstance.createVoucher(TestBorrower, 0x42);
+
+
+        vm.prank(TestBorrower);
+        CreditLineInstance.ExchangeVoucher(voucherId);
+
+        vm.prank(TestBorrower);
+        assert(CreditLineInstance.GetCreditLineAmount() == 0x42);
+        assert(0x42 == MockDaiInstance.balanceOf(address(CreditLineInstance)));
     }
 }

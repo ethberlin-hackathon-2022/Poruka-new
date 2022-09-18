@@ -13,6 +13,9 @@ export default function Connect({
   setTwitterId,
   setAllFollowers,
   allFollowers,
+  injectedProvider,
+  signer,
+  userAddress
 }) {
   return (
     <>
@@ -22,6 +25,9 @@ export default function Connect({
             allFollowers={allFollowers}
             setAllFollowers={setAllFollowers}
             twitterId={twitterId}
+            injectedProvider={injectedProvider}
+            signer={signer}
+            userAddress={userAddress}
           />
         ) : (
           <ConnectTwitter
