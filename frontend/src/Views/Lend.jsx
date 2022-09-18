@@ -193,22 +193,22 @@ export default function Lend({ allFollowers, setAllFollowers, twitterId }) {
                               </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200">
-                              {listPeople.map((person) => (
-                                <tr key={person.email}>
-                                  <li key={person.email} className="flex py-4">
+                              {listPeople?.map((person) => (
+                                <tr key={person.id}>
+                                  <li key={person.id} className="flex py-4">
                                     <div className="flex w-full justify-between">
                                       <div className="flex">
                                         <img
                                           className="h-10 w-10 rounded-full"
-                                          src={person.image}
+                                          src={person.img}
                                           alt=""
                                         />
                                         <div className="ml-3">
                                           <p className="text-sm font-medium text-gray-900">
-                                            {person.name}
+                                            {person.username}
                                           </p>
                                           <p className="text-sm text-gray-500">
-                                            {person.email}
+                                            {person.id}
                                           </p>
                                         </div>
                                       </div>
