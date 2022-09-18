@@ -53,9 +53,9 @@ export default function Lend({ allFollowers, userAddress, setAllFollowers, twitt
       [
         [
           // AMOUNT
-          1, 
+          1,
           // INTEREST
-          0, 
+          0,
         ],
         // Borrower
         '0xaBbAb368BC46F24019858df77D3202bf931A12a3'
