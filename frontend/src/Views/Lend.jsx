@@ -23,10 +23,14 @@ export default function Lend({ allFollowers, setAllFollowers, twitterId }) {
     }
   }, [twitterId, setAllFollowers]);
 
-  const handleAdd = (i, e) => {
+  const handleChange = (i, e) => {
     let newElement = [...listPeople];
     newElement[i][e.target.name] = e.target.value;
     setListPeople(newElement);
+  };
+
+  let handleAdd = (person) => {
+    setListPeople([...listPeople, person]);
   };
 
   const handlePrint = () => {
@@ -124,7 +128,7 @@ export default function Lend({ allFollowers, setAllFollowers, twitterId }) {
                       <button
                         type="button"
                         className="inline-flex items-center rounded border border-gray-300 bg-white px-2.5 py-1.5 text-xs font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                        onClick={(e) => handleAdd(index, e)}
+                        onClick={() => handleAdd(person)}
                       >
                         Add
                       </button>
