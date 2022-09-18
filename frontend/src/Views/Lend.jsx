@@ -177,13 +177,13 @@ export default function Lend({
                   People selected for lending
                 </p>
                 <button
-                  disabled={!listPeople.length}
+                  // disabled={!listPeople.length}
                   onClick={(e) => {
                     handleSubmit(e);
                   }}
                   className={`inline-flex items-center rounded-md border border-transparent bg-blue-${
                     listPeople.length ? "700" : "400"
-                  } px-4 py-2 text-sm font-medium text-white`}
+                  } px-4 py-2 text-sm font-medium text-white hover:bg-blue-700`}
                 >
                   Review
                 </button>
