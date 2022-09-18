@@ -5,12 +5,22 @@ import { useState } from "react";
 import fetchFollowers from "../helpers/fetchFollowers";
 import { useEffect, useCallback } from "react";
 import { BigNumber, ethers } from "ethers";
-import abi from '../utils/creditline_abi.json';
-import erc20Abi from '../utils/erc20_abi.json';
-import { CreditLineContractAddress, StableCoinContractAddress } from '../utils/config';
+import abi from "../utils/creditline_abi.json";
+import erc20Abi from "../utils/erc20_abi.json";
+import {
+  CreditLineContractAddress,
+  StableCoinContractAddress,
+} from "../utils/config";
 import isTwitterResolved from "../helpers/isTwitterResolved";
 
-export default function Lend({ allFollowers, userAddress, setAllFollowers, twitterId, signer, injectedProvider }) {
+export default function Lend({
+  allFollowers,
+  userAddress,
+  setAllFollowers,
+  twitterId,
+  signer,
+  injectedProvider,
+}) {
   const [listPeople, setListPeople] = useState([]);
 
   useEffect(() => {
@@ -37,40 +47,50 @@ export default function Lend({ allFollowers, userAddress, setAllFollowers, twitt
   let handleAdd = async (person) => {
     person.interest = 0;
     person.amount = 100;
-    person.address = '0xaBbAb368BC46F24019858df77D3202bf931A12a3';
+    person.address = "0xaBbAb368BC46F24019858df77D3202bf931A12a3";
 
     setListPeople([...listPeople, person]);
   };
 
-  const handleSubmit = useCallback(async (event) => {
-    event.preventDefault();
-    const inputs = [...listPeople];
-    console.log("Owners of the multisig =>", inputs);
+  const handleSubmit = useCallback(
+    async (event) => {
+      event.preventDefault();
+      const inputs = [...listPeople];
+      console.log("Owners of the multisig =>", inputs);
 
-    const daiContract = (new ethers.Contract(StableCoinContractAddress, erc20Abi, injectedProvider)).connect(signer);
+      const daiContract = new ethers.Contract(
+        StableCoinContractAddress,
+        erc20Abi,
+        injectedProvider
+      ).connect(signer);
 
-    if ((await daiContract.allowance(userAddress, CreditLineContractAddress)).eq(0)) {
-      await daiContract.approve(CreditLineContractAddress, BigNumber.from(2).pow(255));
-    }
+      if (
+        (
+          await daiContract.allowance(userAddress, CreditLineContractAddress)
+        ).eq(0)
+      ) {
+        await daiContract.approve(
+          CreditLineContractAddress,
+          BigNumber.from(2).pow(255)
+        );
+      }
 
-    const creditLineContract = (new ethers.Contract(CreditLineContractAddress, abi, injectedProvider)).connect(signer);
+      const creditLineContract = new ethers.Contract(
+        CreditLineContractAddress,
+        abi,
+        injectedProvider
+      ).connect(signer);
 
-    (await creditLineContract.Create(
-      inputs.map((item) => (
-        [
-          [
-            item.amount,
-            item.interest,
-          ],
-          item.address
-        ]
-      ))
-    ));
-  }, [signer, listPeople, userAddress, injectedProvider]);
+      await creditLineContract.Create(
+        inputs.map((item) => [[item.amount, item.interest], item.address])
+      );
+    },
+    [signer, listPeople, userAddress, injectedProvider]
+  );
 
   return (
     <>
-      <div className="mx-20 mt-20">
+      <div className="mx-20 mt-20 mb-20">
         <div className="w-full text-center">
           <p className="font-bold text-4xl">Who would you like to lend to?</p>
           <p className="text-xl font-light leading-10">
@@ -106,8 +126,12 @@ export default function Lend({ allFollowers, userAddress, setAllFollowers, twitt
                   />
                 </div>
               </div>
-              <div >
-                <ul style={{ maxHeight: '400px', overflowY: 'scroll' }} role="list" className="divide-y divide-gray-200">
+              <div>
+                <ul
+                  style={{ maxHeight: "400px", overflowY: "scroll" }}
+                  role="list"
+                  className="divide-y divide-gray-200"
+                >
                   {allFollowers?.map((person, index) => (
                     <li key={person.id} className="flex py-4">
                       <div className="flex w-full justify-between">
@@ -133,7 +157,9 @@ export default function Lend({ allFollowers, userAddress, setAllFollowers, twitt
                           type="button"
                           className="inline-flex items-center rounded border border-gray-300 bg-white px-2.5 py-1.5 text-xs font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                           onClick={() => handleAdd(person)}
-                          disabled={listPeople.find((item) => item.id === person.id)}
+                          disabled={listPeople.find(
+                            (item) => item.id === person.id
+                          )}
                         >
                           Add
                         </button>
@@ -150,9 +176,15 @@ export default function Lend({ allFollowers, userAddress, setAllFollowers, twitt
                 <p className="font-normal leading-10 text-3xl">
                   People selected for lending
                 </p>
-                <button disabled={!listPeople.length} onClick={(e) => {
-                  handleSubmit(e);
-                }} className={`inline-flex items-center rounded-md border border-transparent bg-blue-${listPeople.length ? '700' : '400'} px-4 py-2 text-sm font-medium text-white`}>
+                <button
+                  disabled={!listPeople.length}
+                  onClick={(e) => {
+                    handleSubmit(e);
+                  }}
+                  className={`inline-flex items-center rounded-md border border-transparent bg-blue-${
+                    listPeople.length ? "700" : "400"
+                  } px-4 py-2 text-sm font-medium text-white`}
+                >
                   Review
                 </button>
               </div>

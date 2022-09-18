@@ -9,7 +9,7 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <BrowserRouter>
-      <div class="h-screen bg-gradient-to-r from-[#FAF2B2] to-[#CEE4FD]">
+      <div class="min-h-screen h-full bg-gradient-to-r from-[#FAF2B2] to-[#CEE4FD]">
         <App />
       </div>
     </BrowserRouter>
