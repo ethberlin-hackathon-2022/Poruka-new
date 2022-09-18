@@ -6,7 +6,6 @@ import { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
-import { useNavigate } from "react-router-dom";
 import Lend from "./Views/Lend";
 import Connect from "./Views/Connect";
 import Navbar from "./Components/Navbar";
@@ -21,12 +20,11 @@ function App() {
   const [address, setAddress] = useState(null);
   const [signer, setSigner] = useState(null);
   const [injectedProvider, setInjectedProvider] = useState();
-  const [connectedNetwork, setConnectedNetwork] = useState();
+  const [_, setConnectedNetwork] = useState();
   const [web3Modal, setWeb3Modal] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
   const [isTwitterConnected, setIsTwitterConnected] = useState(false);
   const [twitterId, setTwitterId] = useState(0);
-  const navigate = useNavigate();
   const [allFollowers, setAllFollowers] = useState([]);
 
   const addListeners = (provider) => {

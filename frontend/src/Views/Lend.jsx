@@ -8,6 +8,7 @@ import { BigNumber, ethers } from "ethers";
 import abi from '../utils/creditline_abi.json';
 import erc20Abi from '../utils/erc20_abi.json';
 import { CreditLineContractAddress, StableCoinContractAddress } from '../utils/config';
+import isTwitterResolved from "../helpers/isTwitterResolved";
 
 export default function Lend({ allFollowers, userAddress, setAllFollowers, twitterId, signer, injectedProvider }) {
   const [listPeople, setListPeople] = useState([]);
@@ -33,7 +34,11 @@ export default function Lend({ allFollowers, userAddress, setAllFollowers, twitt
     setListPeople(newElement);
   };
 
-  let handleAdd = (person) => {
+  let handleAdd = async (person) => {
+    person.interest = 0;
+    person.amount = 100;
+    person.address = '0xaBbAb368BC46F24019858df77D3202bf931A12a3';
+
     setListPeople([...listPeople, person]);
   };
 
@@ -49,18 +54,18 @@ export default function Lend({ allFollowers, userAddress, setAllFollowers, twitt
     }
 
     const creditLineContract = (new ethers.Contract(CreditLineContractAddress, abi, injectedProvider)).connect(signer);
-    (await creditLineContract.Create([
-      [
+
+    (await creditLineContract.Create(
+      inputs.map((item) => (
         [
-          // AMOUNT
-          1,
-          // INTEREST
-          0,
-        ],
-        // Borrower
-        '0xaBbAb368BC46F24019858df77D3202bf931A12a3'
-      ]
-    ]));
+          [
+            item.amount,
+            item.interest,
+          ],
+          item.address
+        ]
+      ))
+    ));
   }, [signer, listPeople, userAddress, injectedProvider]);
 
   return (
@@ -78,13 +83,6 @@ export default function Lend({ allFollowers, userAddress, setAllFollowers, twitt
               <p className="font-normal leading-10 text-3xl">
                 People you follow on Twitter
               </p>
-              <button
-                onClick={(e) => {
-                  handleSubmit(e);
-                }}
-              >
-                CHECK
-              </button>
               <div className="mt-5">
                 <label htmlFor="search" className="sr-only">
                   Search
@@ -108,39 +106,42 @@ export default function Lend({ allFollowers, userAddress, setAllFollowers, twitt
                   />
                 </div>
               </div>
-              <ul role="list" className="divide-y divide-gray-200">
-                {allFollowers?.map((person, index) => (
-                  <li key={person.id} className="flex py-4">
-                    <div className="flex w-full justify-between">
-                      <div className="flex">
-                        <img
-                          className="h-10 w-10 rounded-full"
-                          src={
-                            person.img ||
-                            "https://pbs.twimg.com/profile_images/378800000857919980/lHqPIZza_normal.png"
-                          }
-                          alt=""
-                        />
-                        <div className="ml-3">
-                          <p className="text-sm font-medium text-gray-900">
-                            {person.username || "oo"}
-                          </p>
-                          <p className="text-sm text-gray-500">
-                            {person.id || "ouou"}
-                          </p>
+              <div >
+                <ul style={{ maxHeight: '400px', overflowY: 'scroll' }} role="list" className="divide-y divide-gray-200">
+                  {allFollowers?.map((person, index) => (
+                    <li key={person.id} className="flex py-4">
+                      <div className="flex w-full justify-between">
+                        <div className="flex">
+                          <img
+                            className="h-10 w-10 rounded-full"
+                            src={
+                              person.img ||
+                              "https://pbs.twimg.com/profile_images/378800000857919980/lHqPIZza_normal.png"
+                            }
+                            alt=""
+                          />
+                          <div className="ml-3">
+                            <p className="text-sm font-medium text-gray-900">
+                              {person.username || "oo"}
+                            </p>
+                            <p className="text-sm text-gray-500">
+                              {person.id || "ouou"}
+                            </p>
+                          </div>
                         </div>
+                        <button
+                          type="button"
+                          className="inline-flex items-center rounded border border-gray-300 bg-white px-2.5 py-1.5 text-xs font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                          onClick={() => handleAdd(person)}
+                          disabled={listPeople.find((item) => item.id === person.id)}
+                        >
+                          Add
+                        </button>
                       </div>
-                      <button
-                        type="button"
-                        className="inline-flex items-center rounded border border-gray-300 bg-white px-2.5 py-1.5 text-xs font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                        onClick={() => handleAdd(person)}
-                      >
-                        Add
-                      </button>
-                    </div>
-                  </li>
-                ))}
-              </ul>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           </div>
           <div className="overflow-hidden rounded-lg bg-white shadow w-full">
@@ -149,15 +150,11 @@ export default function Lend({ allFollowers, userAddress, setAllFollowers, twitt
                 <p className="font-normal leading-10 text-3xl">
                   People selected for lending
                 </p>
-                {true ? (
-                  <button className="inline-flex items-center rounded-md border border-transparent bg-blue-700 px-4 py-2 text-sm font-medium text-white">
-                    Review
-                  </button>
-                ) : (
-                  <span className="inline-flex items-center rounded-md border border-transparent bg-gray-200 px-4 py-2 text-sm font-medium text-white">
-                    Review
-                  </span>
-                )}
+                <button disabled={!listPeople.length} onClick={(e) => {
+                  handleSubmit(e);
+                }} className={`inline-flex items-center rounded-md border border-transparent bg-blue-${listPeople.length ? '700' : '400'} px-4 py-2 text-sm font-medium text-white`}>
+                  Review
+                </button>
               </div>
               {listPeople.length === 0 ? (
                 <>
@@ -228,7 +225,7 @@ export default function Lend({ allFollowers, userAddress, setAllFollowers, twitt
                                         onChange={(e) => {
                                           handleChange(index, e);
                                         }}
-                                        value={100}
+                                        value={person.amount}
                                       >
                                         <option>100</option>
                                         <option>200</option>
@@ -245,7 +242,7 @@ export default function Lend({ allFollowers, userAddress, setAllFollowers, twitt
                                         onChange={(e) => {
                                           handleChange(index, e);
                                         }}
-                                        value={0}
+                                        value={person.interest}
                                       >
                                         <option>0</option>
                                         <option>0.5</option>
