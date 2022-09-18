@@ -41,6 +41,7 @@ Borrower:
 * IDriss [ts-library](https://github.com/idriss-crypto/ts-library) as a mapping of Twitter names and wallet addresses
 * Twitter API for user authentication and to fetch followers
 * IDriss Send to send credit line vouchers (NFTs) to Twitter accounts that do not have a wallet yet
+* Integration into IDriss browser extension to reach Poruka from Twitter
 * Smart Contracts deployed on Goerli
   * [Credit line contract](https://goerli.etherscan.io/address/0xda6a763ea19bee1acc1a6e64229cfd9da58cb807)
   * [NFT voucher contract](https://goerli.etherscan.io/address/0x97F282901dfA50E7d2c148C3fDb56F47B0282097)
