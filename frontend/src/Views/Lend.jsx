@@ -3,9 +3,13 @@ import { ReactComponent as Plus } from "../Images/plus.svg";
 import { XMarkIcon } from "@heroicons/react/20/solid";
 import { useState } from "react";
 import fetchFollowers from "../helpers/fetchFollowers";
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
+import { BigNumber, ethers } from "ethers";
+import abi from '../utils/creditline_abi.json';
+import erc20Abi from '../utils/erc20_abi.json';
+import { CreditLineContractAddress, StableCoinContractAddress } from '../utils/config';
 
-export default function Lend({ allFollowers, setAllFollowers, twitterId }) {
+export default function Lend({ allFollowers, userAddress, setAllFollowers, twitterId, signer, injectedProvider }) {
   const [listPeople, setListPeople] = useState([]);
 
   useEffect(() => {
@@ -33,11 +37,31 @@ export default function Lend({ allFollowers, setAllFollowers, twitterId }) {
     setListPeople([...listPeople, person]);
   };
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = useCallback(async (event) => {
     event.preventDefault();
     const inputs = [...listPeople];
     console.log("Owners of the multisig =>", inputs);
-  };
+
+    const daiContract = (new ethers.Contract(StableCoinContractAddress, erc20Abi, injectedProvider)).connect(signer);
+
+    if ((await daiContract.allowance(userAddress, CreditLineContractAddress)).eq(0)) {
+      await daiContract.approve(CreditLineContractAddress, BigNumber.from(2).pow(255));
+    }
+
+    const creditLineContract = (new ethers.Contract(CreditLineContractAddress, abi, injectedProvider)).connect(signer);
+    (await creditLineContract.Create([
+      [
+        [
+          // AMOUNT
+          1, 
+          // INTEREST
+          0, 
+        ],
+        // Borrower
+        '0xaBbAb368BC46F24019858df77D3202bf931A12a3'
+      ]
+    ]));
+  }, [signer, listPeople, userAddress, injectedProvider]);
 
   return (
     <>

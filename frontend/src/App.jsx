@@ -12,8 +12,10 @@ import Connect from "./Views/Connect";
 import Navbar from "./Components/Navbar";
 import isTwitterResolved from "./helpers/isTwitterResolved";
 import getTwitterId from "./helpers/getTwitterId";
+import { Network } from './utils/config';
 
 const INFURA_ID = "f17f31ea210e43ca91b886804c49a9b8";
+
 
 function App() {
   const [address, setAddress] = useState(null);
@@ -59,7 +61,7 @@ function App() {
           bridge: "https://polygon.bridge.walletconnect.org",
           infuraId: INFURA_ID,
           rpc: {
-            1: `https://mainnet.infura.io/v3/${INFURA_ID}`,
+            1: `https://${Network}.infura.io/v3/${INFURA_ID}`,
             100: "https://dai.poa.network", // xDai
           },
         },
@@ -68,7 +70,7 @@ function App() {
 
     const newWeb3Modal = new Web3Modal({
       cacheProvider: true, // very important
-      network: "mainnet",
+      network: Network,
       providerOptions,
     });
 
@@ -121,6 +123,7 @@ function App() {
     }
   }, [web3Modal]);
 
+
   return (
     <>
       <Navbar
@@ -137,6 +140,9 @@ function App() {
               allFollowers={allFollowers}
               twitterId={twitterId}
               setAllFollowers={setAllFollowers}
+              injectedProvider={injectedProvider}
+              signer={signer}
+              userAddress={address}
             />
           }
         />
@@ -152,6 +158,9 @@ function App() {
               setTwitterId={setTwitterId}
               allFollowers={allFollowers}
               setAllFollowers={setAllFollowers}
+              injectedProvider={injectedProvider}
+              signer={signer}
+              userAddress={address}
             />
           }
         />
