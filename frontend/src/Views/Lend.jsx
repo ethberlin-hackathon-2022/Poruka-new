@@ -177,7 +177,8 @@ export default function Lend({
                   People selected for lending
                 </p>
                 <button
-                  // disabled={!listPeople.length}
+                  disabled={!listPeople.length}
+                  type="button"
                   onClick={(e) => {
                     handleSubmit(e);
                   }}
