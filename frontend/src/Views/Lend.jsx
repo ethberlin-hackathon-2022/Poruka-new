@@ -191,7 +191,7 @@ export default function Lend({ allFollowers, setAllFollowers, twitterId }) {
                               </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200">
-                              {people.map((person) => (
+                              {listPeople.map((person) => (
                                 <tr key={person.email}>
                                   <li key={person.email} className="flex py-4">
                                     <div className="flex w-full justify-between">
