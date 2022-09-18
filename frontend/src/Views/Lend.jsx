@@ -204,7 +204,7 @@ export default function Lend({ allFollowers, setAllFollowers, twitterId }) {
                                         onChange={(e) => {
                                           handleChange(index, e);
                                         }}
-                                        defaultValue="100"
+                                        value={100}
                                       >
                                         <option>100</option>
                                         <option>200</option>
@@ -221,7 +221,7 @@ export default function Lend({ allFollowers, setAllFollowers, twitterId }) {
                                         onChange={(e) => {
                                           handleChange(index, e);
                                         }}
-                                        defaultValue="0"
+                                        value={0}
                                       >
                                         <option>0</option>
                                         <option>0.5</option>
