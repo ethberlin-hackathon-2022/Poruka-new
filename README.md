@@ -67,9 +67,9 @@ Twitter: [@GiveWithPoruka](https://twitter.com/givewithporuka)
 
 ## Video Link : 
 
-[Demo Video](https://www.youtube.com/watch?v=6fAFNpbibFo) 
-[Presentation]()
-
+[Demo Video](https://www.loom.com/share/5c358b9152744b76a9acc49923e96206) 
+[Presentation](https://docs.google.com/presentation/d/1TMR_YcgabHQ48yo3XZMZ_vTejvHy_kXmxpQBLR43Pro/edit)
+[Figma Prototype](https://www.figma.com/file/oYVmMv1kE3hPzt8awZXFRX/Lend-to-Fam?node-id=366%3A716)
 
 
 
